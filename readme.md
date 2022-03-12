@@ -1,8 +1,10 @@
 # 알고리즘 레포트
 
 
-## 점근적 표기법
+## 알고리즘 복잡도
+![image](https://user-images.githubusercontent.com/100903674/158020725-84b87c9a-edad-41e6-8a0e-03edbd0f9889.png)
 
+### 점근적 표기법
 
 * **O 표기 :상한 표기법**
 
