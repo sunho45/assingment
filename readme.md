@@ -59,7 +59,8 @@ f(n)|c*g(n)|f(n)>=c*g(n)이고 n>=k을 만족하는 양의 정수 k를 가질때
 ---|---|---|
 2n^2|1*n^2|T
 
-![image](https://user-images.githubusercontent.com/100903674/158023923-5e408d7c-516e-4775-9d60-e9c107bcea69.png)
+![image](https://user-images.githubusercontent.com/100903674/158025435-af153be7-6333-45ef-9f59-51a5d670136f.png)
+
 
 위의 그래프를 보면 양의 정수 c=1에서 f(n)>=c*g(n)을 양의 정수 K=1일때 n>=k일때 f(n)>=c*g(n)을 만족시키므로 f(n)=Ω(g(n))을 만족시킨다.
 
