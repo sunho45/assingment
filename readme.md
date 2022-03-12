@@ -24,9 +24,10 @@ f(n)|c*g(n)|f(n)<=c*g(n)이고 n>=k을 만족하는 양의 정수 k를 가질때
 2n+3|2*n|F
 2n+3|3*n|T
 
-![image](https://user-images.githubusercontent.com/100903674/158021908-f53de5dc-c07f-4882-8f11-824602f33f65.png)
+![image](https://user-images.githubusercontent.com/100903674/158021978-7c26edd8-8684-4f94-9da7-766157fb0bb5.png)
 
 
+보다시피 양의정수 c=3, 교점인 k=3 에서 n>=k일때 f(n)<=c*g(n)을 만족시키므로 f(n)=o(g(n))을 만족시킨다
 
 
 * **Ω 표기:하한 표기법**
