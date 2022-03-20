@@ -137,24 +137,21 @@ ex)
 
 * 선택 문제 알고리즘의 과정
 
-다음과 같이 리스트가 주어지고 두번쨰로 작은 원소를 구한다.
+다음과 같이 리스트가 주어지고 두번쨰로 작은 원소를 구한다. 이떄 k=2
 
-1 |10| 5| 8| 7| 6| 4| 3| 2| 9
----|---|---|---|---|---|---|---|---|---|
+![image](https://user-images.githubusercontent.com/100903674/159172920-23320e47-323a-4694-bd79-f9bfc06bc1bd.png)
+
 
 
 4를  무작위로 pivot으로 설정한다. 
 
-1 |10| 5| 8| 7| 6| 4| 3| 2| 9
----|---|---|---|---|---|---|---|---|---|
-|  |   |   |   |   |   |pivot|
+![image](https://user-images.githubusercontent.com/100903674/159172968-8b15ca51-c6ab-4303-b2ac-706ff4be6e59.png)
 
 
 pivot인 4를 기준으로 작은 원소의 집합과 큰 원소의 집합으로 나눈다.
 
-1 |3| 2| 4| 7| 6| 8| 10| 5| 9
----|---|---|---|---|---|---|---|---|---|
-|smaller|smaller|smaller|   |bigger|bigger|bigger|bigger |bigger|bigger|bigger
+![image](https://user-images.githubusercontent.com/100903674/159172996-97bbd4cb-c165-43f8-899d-e57450d292b7.png)
+
 
 작은 원소의 집합의 개수를 a라 하고 pivot의 개수를 m이라 할때 
 k<a라면 작은 원소의 집합에서
@@ -170,14 +167,14 @@ k번째 작은 값은 작은 원소의 집합에 있다.
 
 
 3을 무작위로 pivot으로 설정해준다
-1 |3| 2|
----|---|---|
-| pivot|
+
+![image](https://user-images.githubusercontent.com/100903674/159173111-6e51b469-96ca-47cf-a820-1bf9404a2a2f.png)
+
+
 
 pivot인 3을 기준으로 pivot보다 작은 원소의 집합과 큰 원소의 집합으로 나누어준다.
-1 |2| 3|
----|---|---|
-smaller|smaller |   |
+
+![image](https://user-images.githubusercontent.com/100903674/159173131-6920adf5-2460-4e80-9423-e68030628246.png)
 
 k=2
 작은 원소의 집합의 개수 a=2이므로
@@ -186,15 +183,13 @@ k=2
 
 k=2를 무작위로 pivot으로 설정한다.
 
-1 |2|
----|---|
-|   |pivot|
+![image](https://user-images.githubusercontent.com/100903674/159173157-026be1b1-979b-42b9-9170-f192653d3780.png)
+
 
 pivot인 2을 기준으로 pivot보다 작은 원소의 집합과 큰 원소의 집합으로 나누어준다.
 
-1 |2|
----|---|
-smaller|  |
+![image](https://user-images.githubusercontent.com/100903674/159173178-08df2535-f0b7-4708-8135-1652b9b65b04.png)
+
 
 a=1이므로 작은 원소의 집합에는 k번쨰 작은 값이 없으므로
 
