@@ -149,6 +149,9 @@ void make_table(node* n, char str[], int len, char* table[])
 		strcpy(table[(n->alphabet) - 'A'], str);
 	}
 ```	
+노드의 자식이 없다면 노드의 알파벳을 확인하여 table의 적절하 위치에 str을 넣는다.
+
+```
 	else //단 노드가 아닌 경우
 	{
 		if (n->left != NULL) //왼쪽 자식이 있는 경우
@@ -157,15 +160,91 @@ void make_table(node* n, char str[], int len, char* table[])
 			make_table(n->left, str, len + 1, table);
 			//재귀호출(문자열에 들어갈 위치에 +1)
 		}
+```
+노드에게 왼쪽 자식이 있다면 0을 삽입
+
+```
 		if (n->right != NULL) //오른쪽 자식이 있는 경우
 		{
 			str[len] = '1'; //문자열에 1 삽입
 			make_table(n->right, str, len + 1, table);
 			//재귀호출(문자열에 들어갈 위치에 +1)
 		}
-	}
-}
+		
+		}
+```		
+노드에게 오른쪽 자식이 있다면 1을 삽입
+
+
+
+
+
 ```
+int main()
+{
+	
+	char arr[MAX]; //압축하고자 하는 문자열
+	char* code[alph_num]; //각 알파벳에 대한 가변길이 코드 배열
+	char str[MAX]; //문자열 변수
+	char encoding[MAX] = ""; //인코딩해서 나온 이진수 배열
+	int i; //반복문 변수
+	char answer; //디코딩 원하는가에 대한 대답 변수
+	node* root;//트리의 루트
+	
+	for (i = 0; i < alph_num; i++)
+		code[i] = (char*)malloc(sizeof(char));
+
+	printf("압축하고자 하는 문자열(대문자) : ");
+	scanf("%s", arr); //압축하고자 하는 문자열 입력
+
+	root = make_Huffman_tree(arr); //허프만코드를 이용한 트리 생성
+	make_table(root, str, 0, code); //트리를 사용한 알파벳 별 가변길이 코드 생성
+
+	i = 0;
+	while (arr[i] != NULL) { //입력받은 문자열이 끝날때까지
+		strcat(encoding, code[arr[i] - 'A']); //문자별 코드 인코딩 문자열 뒤에 넣기
+		strcat(encoding, " ");
+		i++;
+	}
+
+
+	printf("압축 결과 : %s\n", encoding); //인코딩 한 이진수 배열 출력
+
+	return 0;
+}
+
+
+```
+
+다음과 같이 프로그램을 실행하면
+
+
+![image](https://user-images.githubusercontent.com/100903674/161551535-9edd9e29-8946-4b96-bade-c6a1d6d961b6.png)
+다음과 같이 영어 대문자로 이루어진 문자열을 입력하면 인코딩된 이진 배열을 확인할 수 있다.
+
+## 압축률
+ex) 예를들어 DLJLKFLKFLKJELJELJLJFLEJLFJLSFOPIJEOFOJSOFJSOEEUOIJJFOIEJFEOIEFJOEFOIDLJDLLELLEOOEOFO 란 문자열을 압축해보자.
+아스키코드는 하나당 8비트를 할당한다. 반면 이진숫자 0,1은 하나당 1비트를 할당한다. 즉 압축률은
+![image](https://user-images.githubusercontent.com/100903674/161559128-5c4ce46d-8223-4cd2-a30f-673ff8b774bc.png)이다.
+
+
+
+
+
+
+
+우선 일부인 DLJLK을 압축하면
+
+
+
+
+
+
+
+
+
+
+
 
 
 
