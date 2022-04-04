@@ -243,8 +243,9 @@ ex) 예를들어 JDLSFJDLSFLSDKFDLKFLKSJFLKFLJDFGFGFGFGFGFGFGFGFGFGFGFGFGFDGSRGR
 
 압축해보면
 
+![image](https://user-images.githubusercontent.com/100903674/161564143-82ebd3ac-e800-47d0-834b-094855a55af0.png)
 
-![image](https://user-images.githubusercontent.com/100903674/161563928-8acb364c-704a-435a-b193-d8341ce0bfe7.png)
+
 
 
 
