@@ -33,7 +33,7 @@ node* makenode(char alphabet, int freq, struct node* left, struct node* right)
 ``` 주어진 값을 토대로 허프만 트리를 만들어야 한다.
 node* make_Huffman_tree(char arr[])
 ```
-
+```
 {
 	int i = 0;
 	int j;
@@ -44,13 +44,27 @@ node* make_Huffman_tree(char arr[])
 	int check[alph_num] = { 0 };  //합쳐졌는지 확인(합쳐져서 살펴 볼 필요가 없으면 -1)
 	node* tree[alph_num] = { NULL };  //비교할 노드 배열
 	node* new_node; //새 노드
+```
 
+필요한 변수들을 선언해준다
+```
 	while (arr[i] != NULL)
 	{
 		//빈도수 구하기
 		fre[arr[i] - 'A']++;
 		i++;
 	}
+```	
+예를 들어 A가 들어간다면 fre[0]의 값이 증가하고 arr[i] Z라면 fre[25]의 값이 증가한다. 들어온 값이 AAZAZ라면 fre[0]의 값은 3고 fre[25]의 값은 2이다.
+
+
+
+
+
+
+
+
+```	
 	for (int i = 0; i < alph_num; i++)
 	{
 		//알파벳이 존재하면
@@ -60,6 +74,13 @@ node* make_Huffman_tree(char arr[])
 			tree[ind++] = makenode(i + 'A', fre[i], NULL, NULL); //노드 생성
 		}
 	}
+```
+
+A~Z중에서 빈도수가 0이 아니라면 알파벳이 존재한다. 알파벳이 존재한다면 알파벳과 알파벳의 빈도수가 있는 노드를 생성한다.
+
+
+
+```
 	for (i = 0; i < ind - 1; i++)
 	{
 		//가장 작은 수 찾기
@@ -86,13 +107,35 @@ node* make_Huffman_tree(char arr[])
 					if (j != min) //가장 작은 index가 아닌 경우
 						min2 = j;
 
+```
+
+
+
+```
 		tree[min] = makenode(NULL, tree[min]->freq + tree[min2]->freq, tree[min], tree[min2]);
 		//min과 min2인덱스의 빈도수를 합친 빈도수로 새 노드 생성
 		//새로 만든 노드를 min인덱스 자리에 넣는다.
+```
+가장작은수와 두번째로 작은수를 이어 두 빈도수의 합이 들어간 정보의 노드를 생성. 이러한 결합을  (문자열에 있는 알파벳의 개수-1)번한다.
 
+
+```
 		check[min2] = -1;
 		//min2인덱스는 min인덱스 자리의 노드에 합쳐졌으므로 check[min2]<-=1
 	}
 	return tree[min]; //만들어진 트리의 루트 노드 반환
 }
+
 ```
+
+
+
+
+
+
+
+
+
+
+
+
