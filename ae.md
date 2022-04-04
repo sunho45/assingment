@@ -29,10 +29,14 @@ node* makenode(char alphabet, int freq, struct node* left, struct node* right)
 새로운 노드를 만드는 함수이다. 새로운 노드의 구조체를 반환해준다.
 
 
-```
-``` 주어진 값을 토대로 허프만 트리를 만들어야 한다.
+
+
+
+### 주어진 값을 토대로 **허프만 트리**를 만들어야 한다.
+``` 
 node* make_Huffman_tree(char arr[])
 ```
+
 ```
 {
 	int i = 0;
@@ -44,6 +48,8 @@ node* make_Huffman_tree(char arr[])
 	int check[alph_num] = { 0 };  //합쳐졌는지 확인(합쳐져서 살펴 볼 필요가 없으면 -1)
 	node* tree[alph_num] = { NULL };  //비교할 노드 배열
 	node* new_node; //새 노드
+
+
 ```
 
 필요한 변수들을 선언해준다
