@@ -206,9 +206,16 @@ int main()
 		strcat(encoding, " ");
 		i++;
 	}
+if (num == 1) {
+		printf("압축결과 :   1 \n  ");
+		printf("압축률 :   8");
+	}
 
-
+else {
 	printf("압축 결과 : %s\n", encoding); //인코딩 한 이진수 배열 출력
+	printf("압축률: %d", (num * 8) / num2);
+	}
+	
 
 	return 0;
 }
@@ -223,7 +230,7 @@ int main()
 다음과 같이 영어 대문자로 이루어진 문자열을 입력하면 인코딩된 이진 배열을 확인할 수 있다.
 
 ## 압축률
-ex) 예를들어 DLJLKFLKFLKJELJELJLJFLEJLFJLSFOPIJEOFOJSOFJSOEEUOIJJFOIEJFEOIEFJOEFOIDLJDLLELLEOOEOFO 란 문자열을 압축해보자.
+ex) 예를들어 JDLSFJDLSFLSDKFDLKFLKSJFLKFLJDFGFGFGFGFGFGFGFGFGFGFGFGFGFDGSRGRGRDGDRG 을 압축해보자
 아스키코드는 하나당 8비트를 할당한다. 반면 이진숫자 0,1은 하나당 1비트를 할당한다. 즉 압축률은
 ![image](https://user-images.githubusercontent.com/100903674/161559128-5c4ce46d-8223-4cd2-a30f-673ff8b774bc.png)이다.
 
@@ -235,6 +242,7 @@ ex) 예를들어 DLJLKFLKFLKJELJELJLJFLEJLFJLSFOPIJEOFOJSOFJSOEEUOIJJFOIEJFEOIEF
 
 우선 일부인 DLJLK을 압축하면
 
+![image](https://user-images.githubusercontent.com/100903674/161562348-0fcfbe08-0fab-4548-87d4-d9e3b59933c3.png)
 
 
 
