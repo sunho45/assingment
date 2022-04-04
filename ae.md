@@ -240,9 +240,16 @@ ex) 예를들어 JDLSFJDLSFLSDKFDLKFLKSJFLKFLJDFGFGFGFGFGFGFGFGFGFGFGFGFGFDGSRGR
 
 
 
-우선 일부인 DLJLK을 압축하면
 
-![image](https://user-images.githubusercontent.com/100903674/161562348-0fcfbe08-0fab-4548-87d4-d9e3b59933c3.png)
+압축해보면
+
+
+![image](https://user-images.githubusercontent.com/100903674/161563928-8acb364c-704a-435a-b193-d8341ce0bfe7.png)
+
+
+
+
+
 
 
 
