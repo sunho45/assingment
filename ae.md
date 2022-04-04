@@ -137,6 +137,35 @@ A~Z중에서 빈도수가 0이 아니라면 알파벳이 존재한다. 알파벳
 
 
 
+### 이제 허프만 테이블을 만들어 각 문자들을 encode 해준다
+
+```
+void make_table(node* n, char str[], int len, char* table[])
+{
+	if (n->left == NULL && n->right == NULL) //n이 단노드인 경우
+	{
+		str[len] = '\0'; //문장의 끝을 str끝에 넣어주고
+						 //단 노드의 알파벳을 확인하여 table의 적절한 위치에 str문자열을 넣는다.
+		strcpy(table[(n->alphabet) - 'A'], str);
+	}
+```	
+	else //단 노드가 아닌 경우
+	{
+		if (n->left != NULL) //왼쪽 자식이 있는 경우
+		{
+			str[len] = '0'; //문자열에 0 삽입
+			make_table(n->left, str, len + 1, table);
+			//재귀호출(문자열에 들어갈 위치에 +1)
+		}
+		if (n->right != NULL) //오른쪽 자식이 있는 경우
+		{
+			str[len] = '1'; //문자열에 1 삽입
+			make_table(n->right, str, len + 1, table);
+			//재귀호출(문자열에 들어갈 위치에 +1)
+		}
+	}
+}
+```
 
 
 
