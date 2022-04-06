@@ -411,7 +411,7 @@ else {
 
 
 ```
-
+입력값을 받고 출력하는 
 DEEE를 입력하고 다음과 같이 프로그램을 실행하면
 ![image](https://user-images.githubusercontent.com/100903674/161934027-09c8eb09-053b-4bbc-a09c-841ce5b847c3.png)
 
@@ -476,7 +476,7 @@ S|I
 
 
 ## 압축률
-ex) 예를들어 JDLSFJDLSFLSDKFDLKFLKSJFLKFLJDFGFGFGFGFGFGFGFGFGFGFGFGFGFDGSRGRGRDGDRG 을 압축해보자
+ex) 예를들어 SSSSIIIIIINNNNNNNNTTTTTTTTTTTTEEEEEEEEEEEEEEE 을 압축해보자
 아스키코드는 하나당 1바이트 즉 8비트를 할당한다. 반면 이진숫자 0,1은 하나당 1비트를 할당한다. 즉 압축률은
 ![image](https://user-images.githubusercontent.com/100903674/161559128-5c4ce46d-8223-4cd2-a30f-673ff8b774bc.png)이다.
 
@@ -489,8 +489,9 @@ ex) 예를들어 JDLSFJDLSFLSDKFDLKFLKSJFLKFLJDFGFGFGFGFGFGFGFGFGFGFGFGFGFDGSRGR
 
 압축해보면
 
-![image](https://user-images.githubusercontent.com/100903674/161564143-82ebd3ac-e800-47d0-834b-094855a55af0.png)
+![image](https://user-images.githubusercontent.com/100903674/161952976-1768b10b-e6e3-483e-88c6-33ce026b81c3.png)
 
+압축률은 357.4%이다.
 
 이렇게 커다란 데이터덩어리를 최소한의 데이터 덩어리로 줄일 수 있다.
 
