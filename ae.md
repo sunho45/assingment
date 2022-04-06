@@ -436,7 +436,7 @@ ex) 예를들어 JDLSFJDLSFLSDKFDLKFLKSJFLKFLJDFGFGFGFGFGFGFGFGFGFGFGFGFGFDGSRGR
 ![image](https://user-images.githubusercontent.com/100903674/161564143-82ebd3ac-e800-47d0-834b-094855a55af0.png)
 
 
-
+이렇게 커다란 데이터덩어리를 최소한의 데이터 덩어리로 줄일 수 있다.
 
 
 
