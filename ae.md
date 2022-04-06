@@ -129,7 +129,25 @@ void make_table(node* n, char str[], int len, char* table[])
 //(트리 루트 노드,가변 길이 코드 문자열,문자열에 들어갈 위치, 저장 될 배열)
 
 //디코드함수(디코딩 하고 싶은 문자열, 트리 루트 노드)
-
+void decode(char* str, node* root)
+{
+	int i = 0;
+	node* j = root;
+	while (str[i] != '\0') //문자의 끝이 아닌 경우
+	{
+		if (str[i] == '0') //문자가 0인 경우
+			j = j->left; //왼쪽 자식으로 이동
+		else if (str[i] == '1') //문자가 1인 경우
+			j = j->right; //오른쪽 자식으로 이동
+		if (j->left == NULL && j->right == NULL) //단 노드인 경우
+		{
+			printf("%c", j->alphabet); //단 노드의 알파벳 출력
+			j = root;
+		}
+		i++;
+	}
+	printf("\n");
+}
 
 int main()
 {
@@ -178,7 +196,9 @@ int main()
 			printf("%c : %s\n", node_arr[i].alphabet, code[node_arr[i].alphabet - 'A']);
 
 		printf("압축 결과 : %s\n", encoding); //인코딩 한 이진수 배열 출력
-		printf("압축률은 %f 이다", ((num * 8) / num2) * 100);
+		printf("압축률은 %f 이다\n", ((num * 8) / num2) * 100);
+		printf("압축 해제 : ");
+		decode(encoding, root);
 	}
 	return 0;
 }
