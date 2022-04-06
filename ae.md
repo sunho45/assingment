@@ -393,6 +393,7 @@ else {
 ```
 
 다음과 같이 프로그램을 실행하면
+![image](https://user-images.githubusercontent.com/100903674/161934027-09c8eb09-053b-4bbc-a09c-841ce5b847c3.png)
 
 
 
