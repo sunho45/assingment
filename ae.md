@@ -2,7 +2,7 @@
 
 ## 허프만 코드 in C
 
-
+전체 
 ```
 #include<stdio.h>
 #include <stdlib.h>
@@ -188,9 +188,18 @@ int main()
 ```
 새로운 노드를 만드는 함수이다. 새로운 노드의 구조체를 반환해준다.
 
+```
+node* makenode(char alphabet, int freq, struct node* left, struct node* right)
+{
+	node* new_node = (node*)malloc(sizeof(node));
+	new_node->alphabet = alphabet;
+	new_node->freq = freq;
+	new_node->left = left;
+	new_node->right = right;
+	return new_node;
+}
 
-
-
+```
 
 ### 주어진 값을 토대로 **허프만 트리**를 만들어야 한다.
 ``` 
@@ -386,7 +395,7 @@ else {
 다음과 같이 프로그램을 실행하면
 
 
-![image](https://user-images.githubusercontent.com/100903674/161551535-9edd9e29-8946-4b96-bade-c6a1d6d961b6.png)
+
 다음과 같이 영어 대문자로 이루어진 문자열을 입력하면 인코딩된 이진 배열을 확인할 수 있다.
 
 ## 압축률
