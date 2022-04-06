@@ -417,7 +417,49 @@ DEEE를 입력하고 다음과 같이 프로그램을 실행하면
 
 
 
+
+
+
+
+
+
+
+
+
 다음과 같이 영어 대문자로 이루어진 문자열을 입력하면 인코딩된 이진 배열을 확인할 수 있다.
+## 진행과정
+
+예를들어 문자열 SSSSIIIIIINNNNNNNNTTTTTTTTTTTTEEEEEEEEEEEEEEE를 입력해보자
+그러면 각 문자의 빈도수는 
+S|I|N|T|E
+---|---|---|---|---|
+4|6|8|12|15
+
+
+S|
+---|
+4
+
+I|
+---|
+6
+
+N|
+---|
+8
+
+T|
+---|
+12
+
+
+E|
+---|
+15
+
+문자의 빈도수의 정보가 있는 노드들을 생성한다.
+
+
 
 ## 압축률
 ex) 예를들어 JDLSFJDLSFLSDKFDLKFLKSJFLKFLJDFGFGFGFGFGFGFGFGFGFGFGFGFGFDGSRGRGRDGDRG 을 압축해보자
