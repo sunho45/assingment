@@ -470,7 +470,7 @@ E|
 
 ###정상적
 위와 같은 과정을 해본다면
-![image](https://user-images.githubusercontent.com/100903674/162168313-ff344375-386c-4679-8165-c85573e6efcb.png)
+![image](https://user-images.githubusercontent.com/100903674/162169112-feebdebf-956f-4d5a-b4c6-a33540897006.png)
 
 
 A|B|C|D|E|F
