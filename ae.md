@@ -187,7 +187,7 @@ int main()
 	}
 	if (num == 1) {
 		printf("압축결과 :   1 \n  ");
-		printf("압축률 :   800 ");
+		printf("압축비 :   8 ");
 	}
 
 
@@ -196,7 +196,7 @@ int main()
 			printf("%c : %s\n", node_arr[i].alphabet, code[node_arr[i].alphabet - 'A']);
 
 		printf("압축 결과 : %s\n", encoding); //인코딩 한 이진수 배열 출력
-		printf("압축률은 %f 이다\n", ((num * 8) / num2) * 100);
+		printf("압축비는 %f 이다\n", ((num * 8) / num2) );
 		printf("압축 해제 : ");
 		decode(encoding, root);
 	}
@@ -413,7 +413,8 @@ else {
 ```
 입력값을 받고 출력하는 
 DEEE를 입력하고 다음과 같이 프로그램을 실행하면
-![image](https://user-images.githubusercontent.com/100903674/161934027-09c8eb09-053b-4bbc-a09c-841ce5b847c3.png)
+![image](https://user-images.githubusercontent.com/100903674/162104486-d1640326-7cd4-430a-837b-c2fb3d7c7518.png)
+
 
 
 
@@ -475,9 +476,9 @@ S|I
 
 
 
-## 압축률
+## 압축비
 ex) 예를들어 SSSSIIIIIINNNNNNNNTTTTTTTTTTTTEEEEEEEEEEEEEEE 을 압축해보자
-아스키코드는 하나당 1바이트 즉 8비트를 할당한다. 반면 이진숫자 0,1은 하나당 1비트를 할당한다. 즉 압축률은
+아스키코드는 하나당 1바이트 즉 8비트를 할당한다. 반면 이진숫자 0,1은 하나당 1비트를 할당한다. 즉 압축비는
 ![image](https://user-images.githubusercontent.com/100903674/161559128-5c4ce46d-8223-4cd2-a30f-673ff8b774bc.png)이다.
 
 
@@ -489,9 +490,10 @@ ex) 예를들어 SSSSIIIIIINNNNNNNNTTTTTTTTTTTTEEEEEEEEEEEEEEE 을 압축해보�
 
 압축해보면
 
-![image](https://user-images.githubusercontent.com/100903674/161952976-1768b10b-e6e3-483e-88c6-33ce026b81c3.png)
+![image](https://user-images.githubusercontent.com/100903674/162105071-20eb8fcc-204f-410d-ac86-5aa60c664785.png)
 
-압축률은 357.4%이다.
+
+압축비는 3.6이다.
 
 이렇게 커다란 데이터덩어리를 최소한의 데이터 덩어리로 줄일 수 있다.
 
