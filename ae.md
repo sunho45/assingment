@@ -204,7 +204,7 @@ int main()
 }
 
 
-}
+
 ```
 새로운 노드를 만드는 함수이다. 새로운 노드의 구조체를 반환해준다.
 
@@ -479,7 +479,8 @@ S|I
 ## 압축비
 ex) 예를들어 SSSSIIIIIINNNNNNNNTTTTTTTTTTTTEEEEEEEEEEEEEEE 을 압축해보자
 아스키코드는 하나당 1바이트 즉 8비트를 할당한다. 반면 이진숫자 0,1은 하나당 1비트를 할당한다. 즉 압축비는
-![image](https://user-images.githubusercontent.com/100903674/161559128-5c4ce46d-8223-4cd2-a30f-673ff8b774bc.png)이다.
+![image](https://user-images.githubusercontent.com/100903674/162105368-7fc970f3-ae01-473b-8d3f-e4c2b6f44f19.png)이다.
+
 
 
 
