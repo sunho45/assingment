@@ -428,7 +428,7 @@ DEEE를 입력하고 다음과 같이 프로그램을 실행하면
 
 
 다음과 같이 영어 대문자로 이루어진 문자열을 입력하면 인코딩된 이진 배열을 확인할 수 있다.
-## 예외
+## 예외&
 
 예를들어 문자열 SSSSIIIIIINNNNNNNNTTTTTTTTTTTTEEEEEEEEEEEEEEE를 입력해보자
 그러면 각 문자의 빈도수는 
