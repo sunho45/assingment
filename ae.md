@@ -2,7 +2,7 @@
 
 ## 허프만 코드 in C
 
-전체 
+전체 코드
 ```
 #include<stdio.h>
 #include <stdlib.h>
