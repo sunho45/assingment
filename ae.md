@@ -429,7 +429,7 @@ DEEE를 입력하고 다음과 같이 프로그램을 실행하면
 
 다음과 같이 영어 대문자로 이루어진 문자열을 입력하면 인코딩된 이진 배열을 확인할 수 있다.
 ## 예외&정상적 
-###
+### 예외
 예를들어 문자열 SSSSIIIIIINNNNNNNNTTTTTTTTTTTTEEEEEEEEEEEEEEE를 입력해보자
 그러면 각 문자의 빈도수는 
 S|I|N|T|E
@@ -468,7 +468,7 @@ E|
 
 오른쪽 극단에서 뒤의 코드가 바뀌는 일이 있다. 하지만 디코딩의 prefix 성질은 만족하므로 큰 오류는 발생하지 않는다.
 
-###정상적
+### 정상적
 위와 같은 과정을 해본다면
 ![image](https://user-images.githubusercontent.com/100903674/162169112-feebdebf-956f-4d5a-b4c6-a33540897006.png)
 
