@@ -444,7 +444,12 @@ int main() {
 
 ## 압축비
 
-예를 들어 문자열 DDDDAAAEEEEE을 입력해보자.
+예를 들어 문자열 DDDDAAAEEEEE을 입력해보자. 아스키코드는 1바이트 즉 8비트 이진문자 0,1은 1비트를 할당한다.
+즉 압축비는
+![image](https://user-images.githubusercontent.com/100903674/162156968-d3931d17-ae9c-4eb8-8a4a-d876cc3c50f3.png)
+
+
+
 빈도수는 
 A|D|E
 ---|---|---|
@@ -459,10 +464,12 @@ DDDDAAAEEEEE을 인코딩하면
 1111111110101000000
 
 
+즉 압축비는
+ (12*8) /19=5.05이다.
 
 
 
-
+![image](https://user-images.githubusercontent.com/100903674/162157628-07efda64-547e-4c90-a067-17d7ec8f73f2.png)
 
 
 
