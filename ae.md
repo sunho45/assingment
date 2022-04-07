@@ -474,7 +474,7 @@ E|
 
 
 ## 압축비
-ex) 예를들어 SSSSIIIIIINNNNNNNNTTTTTTTTTTTTEEEEEEEEEEEEEEE 을 압축해보자
+ex) 예를들어 문자열  ABBCCDDDEEEEFFFFFF을 압축해보자
 아스키코드는 하나당 1바이트 즉 8비트를 할당한다. 반면 이진숫자 0,1은 하나당 1비트를 할당한다. 즉 압축비는
 ![image](https://user-images.githubusercontent.com/100903674/162105368-7fc970f3-ae01-473b-8d3f-e4c2b6f44f19.png)이다.
 
@@ -488,10 +488,11 @@ ex) 예를들어 SSSSIIIIIINNNNNNNNTTTTTTTTTTTTEEEEEEEEEEEEEEE 을 압축해보�
 
 압축해보면
 
-![image](https://user-images.githubusercontent.com/100903674/162105071-20eb8fcc-204f-410d-ac86-5aa60c664785.png)
+![image](https://user-images.githubusercontent.com/100903674/162158224-2ba9a3d3-0eb8-41ee-891f-ac11ffe00a65.png)
 
 
-압축비는 3.6이다.
+
+압축비는 3.2727이다.
 
 이렇게 커다란 데이터덩어리를 최소한의 데이터 덩어리로 줄일 수 있다.
 
