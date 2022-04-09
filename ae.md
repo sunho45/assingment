@@ -132,7 +132,7 @@ void decode(char* str, node* root)
 {
 	int i = 0;
 	node* j = root;
-	while (str[i] != '\0') //문자의 끝이 아닌 경우
+	while (str[i] != '\0') //문자의 끝이 아닌 경우.
 	{
 		if (str[i] == '0') //문자가 0인 경우
 			j = j->left; //왼쪽 자식으로 이동
