@@ -78,7 +78,7 @@ node* make_Huffman_tree(char arr[])
 					//min인덱스 빈도수 보다 빈도수가 작은 경우
 					min = j;
 
-		//두번째로 작은 수 찾기
+		//두번째로 작은 수 찾기.
 		j = 0;
 		while (check[j] == -1 || j == min) j++;
 		//합쳐진 노드와 최소 노드 제외한 배열 중 가장 앞 index
