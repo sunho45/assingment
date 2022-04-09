@@ -1,227 +1,548 @@
-# 분할정복
+# 허프만 코드
+
+## 허프만 코드 in C
+
+전체 코드
+```
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#pragma warning(disable:4996)
+#define MAX 10000
+#define askii 122 //소문자z까지의 아스키코드
+//트리 노드
+typedef struct node
+{
+	char character;  // 문자
+	int freq;//빈도수
+	struct node* left; //왼쪽 자식 노드
+	struct node* right; //오른쪽 자식 노드
+}node;
+
+node* make_Huffman_tree(char arr[]);  //허프만 코드 트리 생성(압축하고자 하는 문자열)
+node* makenode(char character, int freq, struct node* left, struct node* right); //새 노드 생성
+void make_table(node* n, char str[], int len, char* table[]); //문자 별 가변길이 코드 배열 생성
+void decode(char* str, node* root); //디코드함수
+node node_arr[askii] = { NULL };
+int ind = 0;//문자 갯수
+
+//새 노드 생성(문자,빈도수,왼쪽 자식 노드,오른쪽 자식 노드) 
+node* makenode(char character, int freq, struct node* left, struct node* right)
+{
+	node* new_node = (node*)malloc(sizeof(node));
+	new_node->character = character;
+	new_node->freq = freq;
+	new_node->left = left;
+	new_node->right = right;
+	return new_node;
+}
+
+//허프만 코드 트리 생성(압축하고자 하는 문자열)
+node* make_Huffman_tree(char arr[])
+{
+	int i = 0;
+	int j;
+	int temp_n = 0;
+	int min = 0;  //제일 빈도수가 작은 index
+	int min2 = 0; //두 번째로 빈도수가 작은 index
+	int fre[askii] = { 0 };  //문자(space~z) 빈도 수
+	int check[askii] = { 0 };  //합쳐졌는지 확인(합쳐져서 살펴 볼 필요가 없으면 -1)
+	node* tree[askii] = { NULL };  //비교할 노드 배열
+	node* new_node; //새 노드
+
+	while (arr[i] != NULL)
+	{
+		//빈도수 구하기
+		fre[arr[i]]++;
+		i++;
+	}
+	for (int i = 32; i < askii; i++)
+	{
+		//문자가 존재하면
+		if (fre[i] != 0)
+		{
+			node_arr[ind] = *makenode(i, fre[i], NULL, NULL);//space부터 z까지
+			tree[ind++] = makenode(i, fre[i], NULL, NULL); //노드 생성
+		}
+	}
+	for (i = 0; i < ind - 1; i++)
+	{
+		//가장 작은 수 찾기
+		j = 0;
+		while (check[j] == -1)	j++; //합쳐진 노드를 제외한 배열 중 가장 앞 index
+		min = j; //우선 제일 작다고 가정
+
+		for (j = min; j < ind - 1; j++) //모든 배열을 검사
+			if (check[j] != -1) //이미 합쳐진 노드가 아니면(검사해볼 필요가 있으면)
+				if (tree[min]->freq > tree[j]->freq)
+					//min인덱스 빈도수 보다 빈도수가 작은 경우
+					min = j;
+
+		//두번째로 작은 수 찾기.
+		j = 0;
+		while (check[j] == -1 || j == min) j++;
+		//합쳐진 노드와 최소 노드 제외한 배열 중 가장 앞 index
+		min2 = j;  //두번째로 작다고 가정
+
+		for (j = min2; j < ind; j++)
+			if (check[j] != -1) //이미 합쳐진 노드가 아니면
+				if (tree[min2]->freq > tree[j]->freq)
+					//min2인덱스 빈도수 보다 빈도수가 작은 경우
+					if (j != min) //가장 작은 index가 아닌 경우
+						min2 = j;
+
+		tree[min] = makenode(NULL, tree[min]->freq + tree[min2]->freq, tree[min], tree[min2]);
+		//min과 min2인덱스의 빈도수를 합친 빈도수로 새 노드 생성
+		//새로 만든 노드를 min인덱스 자리에 넣는다.
+
+		check[min2] = -1;
+		//min2인덱스는 min인덱스 자리의 노드에 합쳐졌으므로 check[min2]<-=1
+	}
+	return tree[min]; //만들어진 트리의 루트 노드 반환
+}
+void make_table(node* n, char str[], int len, char* table[])
+{
+	if (n->left == NULL && n->right == NULL) //n이 단노드인 경우
+	{
+		str[len] = '\0'; //문장의 끝을 str끝에 넣어주고
+						 //단 노드의 문자를 확인하여 table의 적절한 위치에 str문자열을 넣는다.
+		strcpy(table[(n->character)], str);
+	}
+	else //단 노드가 아닌 경우
+	{
+		if (n->left != NULL) //왼쪽 자식이 있는 경우
+		{
+			str[len] = '0'; //문자열에 0 삽입
+			make_table(n->left, str, len + 1, table);
+			//재귀호출(문자열에 들어갈 위치에 +1)
+		}
+		if (n->right != NULL) //오른쪽 자식이 있는 경우
+		{
+			str[len] = '1'; //문자열에 1 삽입
+			make_table(n->right, str, len + 1, table);
+			//재귀호출(문자열에 들어갈 위치에 +1)
+		}
+	}
+}
+//문자 별 가변길이 코드 배열 생성
+//(트리 루트 노드,가변 길이 코드 문자열,문자열에 들어갈 위치, 저장 될 배열)
+
+//디코드함수(디코딩 하고 싶은 문자열, 트리 루트 노드)
+void decode(char* str, node* root)
+{
+	int i = 0;
+	node* j = root;
+	while (str[i] != '\0') //문자의 끝이 아닌 경우.
+	{
+		if (str[i] == '0') //문자가 0인 경우
+			j = j->left; //왼쪽 자식으로 이동
+		else if (str[i] == '1') //문자가 1인 경우
+			j = j->right; //오른쪽 자식으로 이동
+		if (j->left == NULL && j->right == NULL) //단 노드인 경우
+		{
+			printf("%c", j->character); //단 노드의 문자 출력
+			j = root;
+		}
+		i++;
+	}
+	printf("\n");
+}
+
+int main()
+{
+
+	char arr[MAX]; //압축하고자 하는 문자열
+	char* code[askii]; //각 문자에 대한 가변길이 코드 배열
+	char str[MAX]; //문자열 변수
+	char encoding[MAX] = ""; //인코딩해서 나온 이진수 배열
+	int i; //반복문 변수
+	char answer; //디코딩 원하는가에 대한 대답 변수
+	node* root;//트리의 루트
+	float num = 1.0;
+	for (i = 32; i < askii; i++)
+		code[i] = (char*)malloc(sizeof(char));
+
+	printf("압축파일: ");
+	scanf("%[^\n]s", arr); //압축하고자 하는 문자열 입력
+	for (int i = 1; arr[i] != NULL; i++) {
+
+
+		num++;
+	}
+	float num2 = 1.0;
+	root = make_Huffman_tree(arr); //허프만코드를 이용한 트리 생성
+	make_table(root, str, 0, code); //트리를 사용한 문자 별 가변길이 코드 생성
+
+	i = 0;
+	while (arr[i] != NULL) { //입력받은 문자열이 끝날때까지
+		
+		strcat(encoding, code[arr[i]]); //문자별 코드 인코딩 문자열 뒤에 넣기
+
+		i++;
+		
+	}
+	for (int o = 1; encoding[o] != NULL; o++) {
+
+		num2++;
+
+	}
+	if (num == 1) {
+		printf("압축결과 :   1 \n  ");
+		printf("압축비 :   8 ");
+	}
+
+
+	else {
+		for (i = 0; i < ind; i++)
+			printf("%c : %s\n", node_arr[i].character, code[node_arr[i].character]);
+
+		printf("압축 결과 : %s\n", encoding); //인코딩 한 이진수 배열 출력
+		printf("압축비는 %f 이다\n", ((num * 8) / num2));
+		printf("압축 해제 : ");
+		decode(encoding, root);
+	}
+	return 0;
+}
+
+,
+
+
+```
+새로운 노드를 만드는 함수이다. 새로운 노드의 구조체를 반환해준다.
+
+```
+node* makenode(char character, int freq, struct node* left, struct node* right)
+{
+	node* new_node = (node*)malloc(sizeof(node));
+	new_node->character = character;
+	new_node->freq = freq;
+	new_node->left = left;
+	new_node->right = right;
+	return new_node;
+}
+
+```
+
+### 주어진 값을 토대로 **허프만 트리**를 만들어야 한다.
+``` 
+node* make_Huffman_tree(char arr[])
+```
+
+```
+{
+	int i = 0;
+	int j;
+	int temp_n = 0;
+	int min = 0;  //제일 빈도수가 작은 index
+	int min2 = 0; //두 번째로 빈도수가 작은 index
+	int fre[askii] = { 0 };  //문자(space~z) 빈도 수
+	int check[askii] = { 0 };  //합쳐졌는지 확인(합쳐져서 살펴 볼 필요가 없으면 -1)
+	node* tree[askii] = { NULL };  //비교할 노드 배열
+	node* new_node; //새 노드
+
+
+```
+
+필요한 변수들을 선언해준다
+```
+	while (arr[i] != NULL)
+	{
+		//빈도수 구하기
+		fre[arr[i]]++;
+		i++;
+	}
+```	
+예를 들어 공백(space)이 들어간다면 fre[31]의 값이 증가하고 arr[i] z라면 fre[121]의 값이 증가한다. 들어온 값이 AAZAZ라면 fre[64]의 값은 3고 fre[121]의 값은 2이다.
+
+
+
+
+
+
+
+
+```	
+	for (int i = 0; i < askii; i++)
+	{
+		//문자가 존재하면
+		if (fre[i] != 0)
+		{
+			node_arr[ind] = *makenode(i, fre[i], NULL, NULL);//space부터 z까지
+			tree[ind++] = makenode(i, fre[i], NULL, NULL); //노드 생성
+		}
+	}
+```
+
+공백(space)~z중에서 빈도수가 0이 아니라면 문자가 존재한다. 문자가 존재한다면 문자와 문자의 빈도수가 있는 노드를 생성한다.
+
+
+
+```
+	for (i = 0; i < ind - 1; i++)
+	{
+		//가장 작은 수 찾기
+		j = 0;
+		while (check[j] == -1)	j++; //합쳐진 노드를 제외한 배열 중 가장 앞 index
+		min = j; //우선 제일 작다고 가정
+
+		for (j = min; j < ind - 1; j++) //모든 배열을 검사
+			if (check[j] != -1) //이미 합쳐진 노드가 아니면(검사해볼 필요가 있으면)
+				if (tree[min]->freq > tree[j]->freq)
+					//min인덱스 빈도수 보다 빈도수가 작은 경우
+					min = j;
+
+		//두번째로 작은 수 찾기
+		j = 0;
+		while (check[j] == -1 || j == min) j++;
+		//합쳐진 노드와 최소 노드 제외한 배열 중 가장 앞 index
+		min2 = j;  //두번째로 작다고 가정
+
+		for (j = min2; j < ind; j++)
+			if (check[j] != -1) //이미 합쳐진 노드가 아니면
+				if (tree[min2]->freq > tree[j]->freq)
+					//min2인덱스 빈도수 보다 빈도수가 작은 경우
+					if (j != min) //가장 작은 index가 아닌 경우
+						min2 = j;
+
+```
+가장작은 값과 가장큰 값의 배열 번호를 알아낸다. min은 가장 작은 원소의 인덱스 번호이고 min2는 두번째로 작은 원소의 인덱스 번호 값이다.
+
+
+```
+		tree[min] = makenode(NULL, tree[min]->freq + tree[min2]->freq, tree[min], tree[min2]);
+		//min과 min2인덱스의 빈도수를 합친 빈도수로 새 노드 생성
+		//새로 만든 노드를 min인덱스 자리에 넣는다.
+```
+가장작은수와 두번째로 작은수를 이어 두 빈도수의 합이 들어간 정보의 노드를 생성. 이러한 결합을  (문자열에 있는 알파벳의 개수-1)번한다.
+
+
+```
+		check[min2] = -1;
+		//min2인덱스는 min인덱스 자리의 노드에 합쳐졌으므로 check[min2]<-=1
+	}
+	return tree[min]; //만들어진 트리의 루트 노드 반환
+}
+
+```
+최종적으로 모든 값이 들어있는 트리의 루트노드를 반환시켜준다.
+
+
+
+### 이제 허프만 테이블을 만들어 각 문자들을 encode 해준다
+
+```
+void make_table(node* n, char str[], int len, char* table[])
+{
+	if (n->left == NULL && n->right == NULL) //n이 단노드인 경우
+	{
+		str[len] = '\0'; //문장의 끝을 str끝에 넣어주고
+						 //단 노드의 문자를 확인하여 table의 적절한 위치에 str문자열을 넣는다.
+		strcpy(table[(n->character)], str);
+	}
+```	
+노드의 자식이 없다면 노드의 문자를 확인하여 table의 적절하 위치에 str을 넣는다.
+
+```
+	else //단 노드가 아닌 경우
+	{
+		if (n->left != NULL) //왼쪽 자식이 있는 경우
+		{
+			str[len] = '0'; //문자열에 0 삽입
+			make_table(n->left, str, len + 1, table);
+			//재귀호출(문자열에 들어갈 위치에 +1)
+		}
+```
+노드에게 왼쪽 자식이 있다면 0을 삽입
+
+```
+		if (n->right != NULL) //오른쪽 자식이 있는 경우
+		{
+			str[len] = '1'; //문자열에 1 삽입
+			make_table(n->right, str, len + 1, table);
+			//재귀호출(문자열에 들어갈 위치에 +1)
+		}
+		
+		}
+```		
+노드에게 오른쪽 자식이 있다면 1을 삽입
+
+
+
+
+
+```
+int main()
+{
+
+	char arr[MAX]; //압축하고자 하는 문자열
+	char* code[askii]; //각 문자에 대한 가변길이 코드 배열
+	char str[MAX]; //문자열 변수
+	char encoding[MAX] = ""; //인코딩해서 나온 이진수 배열
+	int i; //반복문 변수
+	char answer; //디코딩 원하는가에 대한 대답 변수
+	node* root;//트리의 루트
+	float num = 1.0;
+	for (i = 32; i < askii; i++)
+		code[i] = (char*)malloc(sizeof(char));
+
+	printf("압축파일: ");
+	scanf("%[^\n]s", arr); //압축하고자 하는 문자열 입력
+	for (int i = 1; arr[i] != NULL; i++) {
+
+
+		num++;
+	}
+	float num2 = 1.0;
+	root = make_Huffman_tree(arr); //허프만코드를 이용한 트리 생성
+	make_table(root, str, 0, code); //트리를 사용한 문자 별 가변길이 코드 생성
+
+	i = 0;
+	while (arr[i] != NULL) { //입력받은 문자열이 끝날때까지
+		
+		strcat(encoding, code[arr[i]]); //문자별 코드 인코딩 문자열 뒤에 넣기
+
+		i++;
+		
+	}
+	for (int o = 1; encoding[o] != NULL; o++) {
+
+		num2++;
 
-## 합병정렬 
-* 합병정렬의 정의
+	}
+	if (num == 1) {
+		printf("압축결과 :   1 \n  ");
+		printf("압축비 :   8 ");
+	}
 
-입력이 2개의 부분리스트로 분할 되고, 부분리스트의 크기가 1/2로 감소하는 분할 정복 알고리즘이다. n개의 숫자를 n/2개의 부분리스트를 분할하고,각각의 부분리스트를 재귀적으로 합병한 후 2개의 정렬된 부분을 합병하는 정렬 
 
-* 합병정렬의 진행과정
+	else {
+		for (i = 0; i < ind; i++)
+			printf("%c : %s\n", node_arr[i].character, code[node_arr[i].character]);
 
-Step1. 분할: 배열을 반으로 분할한다. 분할한 배열의 원소는 각각 n/2이다.
+		printf("압축 결과 : %s\n", encoding); //인코딩 한 이진수 배열 출력
+		printf("압축비는 %f 이다\n", ((num * 8) / num2));
+		printf("압축 해제 : ");
+		decode(encoding, root);
+	}
 
-Step2. 정렬: 분할한 배열을 각각 따로 정렬한다. 분할한 배열에 원소의 크기가 2개 이상이면 순환 호출을 이용하여 다시 분할 정복 알고리즘을 적용한다.
+	return 0;
+}
 
-Step3. 결합: 정렬된 부분 배열들을 하나의 배열로 합병하여 정렬한다.
 
-ex)
-하나의 리스트가 주어져있다.
+```
+입력값을 받고 출력하는 
+DEEE를 입력하고 다음과 같이 프로그램을 실행하면
+![image](https://user-images.githubusercontent.com/100903674/162104486-d1640326-7cd4-430a-837b-c2fb3d7c7518.png)
 
-![image](https://user-images.githubusercontent.com/100903674/159172023-769cba27-239f-464b-b52e-88722d225f2e.png)
 
 
 
 
-두개의 부분리스트로 분할 된다.
 
-![image](https://user-images.githubusercontent.com/100903674/159172294-7cafd5eb-1f47-416a-b440-ca43affc50ee.png)
 
 
-두개의 부분리스트들이 분열되어 4개의 부분리스트로 분할되었다
 
-![image](https://user-images.githubusercontent.com/100903674/159172448-441636f9-34fe-4f6b-938a-074ec16c8021.png)
 
 
-분할이 끝났다. 
- 
- ![image](https://user-images.githubusercontent.com/100903674/159172336-718e610d-8bf8-4600-a5e7-f05449bbd831.png)
 
 
-이제는 정렬과 결합을 할 차례이다.
+다음과 같이 영어 대문자로 이루어진 문자열을 입력하면 인코딩된 이진 배열을 확인할 수 있다.
+## 예외&정상적 
+### 예외
+예를들어 문자열 SSSSIIIIIINNNNNNNNTTTTTTTTTTTTEEEEEEEEEEEEEEE를 입력해보자
+그러면 각 문자의 빈도수는 
+S|I|N|T|E
+---|---|---|---|---|
+4|6|8|12|15
 
-각각의 하나의 원소들이 왼쪽부터 차례대로 두개씩 정렬되고 결합된다.
 
-![image](https://user-images.githubusercontent.com/100903674/159172390-86436d19-5618-4a4d-83d1-325c65470b15.png)
+S|
+---|
+4
 
+I|
+---|
+6
 
-두개의 원소를 가진 부분리스트들이 4개의 원소를 가진 부분리스트들로 정렬되고 결합한다.
+N|
+---|
+8
 
-![image](https://user-images.githubusercontent.com/100903674/159172566-a9f8d135-ec97-42c1-9fe6-83c470058338.png)
+T|
+---|
+12
 
- 
-최종적으로 정렬된 하나의 부분리스트가 만들어진다.
 
-![image](https://user-images.githubusercontent.com/100903674/159172404-2c423135-7541-40cb-8f44-db0a07e44f1e.png)
+E|
+---|
+15
 
-* 합병정렬의 시간 복잡도
+문자의 빈도수의 정보가 있는 노드들을 생성한다.
 
-대체로 시간 복잡도는 O(nlog(n))
+이러한 노드들을 트리 배열에 놓고 가장 작은 값과 두번쨰로 작은 값이 들어있는 노드들을 뽑아 서브트리를 만든다
 
 
+이러한 과정들을 반복하면
+![image](https://user-images.githubusercontent.com/100903674/162105641-91839cc3-cba9-474b-8b35-58ecbe73785a.png)
 
+오른쪽 극단에서 뒤의 코드가 바뀌는 일이 있다. 하지만 디코딩의 prefix 성질은 만족하므로 큰 오류는 발생하지 않는다.
 
-## 퀵 정렬
+### 정상적
+위와 같은 과정을 해본다면
+![image](https://user-images.githubusercontent.com/100903674/162169112-feebdebf-956f-4d5a-b4c6-a33540897006.png)
 
-* 퀵정렬의 정의
 
-하나의 리스트를 피벗(pivot)을 기준으로 두 개의 부분리스트로 나누어 하나는 피벗보다 작은 값들의 부분리스트, 다른 하나는 피벗보다 큰 값들의 부분리스트로 정렬한 다음, 각 부분리스트에 대해 다시 위 처럼 재귀적으로 수행하는 정렬
+A|B|C|D|E|F
+---|---|---|---|---|---|
+1010|1011|100|00|01|11
 
+ABBCCDDDEEEEFFFFFF를 인코딩하면
 
-* 퀵정렬의 과정
+10101011101110010000000001010101111111111111이 된다.
 
-퀵 정렬은 어느 값을 pivot으로 정하는지에 따라 달라진다. 이번은 퀵 정렬중 중요한 함수인 **partiton 함수**를 사용한다.
-ex)
-다음과 같이 리스트가 주어졌다
 
-![image](https://user-images.githubusercontent.com/100903674/159172669-8f0cf37a-2c16-4c7a-b5fa-851c4b275f55.png)
+## 압축비
+ex) 예를들어 문자열  ABBCCDDDEEEEFFFFFF을 압축해보자
+아스키코드는 하나당 1바이트 즉 8비트를 할당한다. 반면 이진숫자 0,1은 하나당 1비트를 할당한다. 즉 압축비는
+![image](https://user-images.githubusercontent.com/100903674/162105368-7fc970f3-ae01-473b-8d3f-e4c2b6f44f19.png)이다.
 
 
-전체 원소에서 첫번째 값인 12를 피벗으로 정한다.
 
-![image](https://user-images.githubusercontent.com/100903674/159172691-b9b025af-94ea-4038-8979-0e23bdc7a7e5.png)
 
 
-왼쪽부터 시작하여 5보다 큰 원소인 16을 찾고 오른쪽부터 12보다 작은 원소인 10을 찾는다. 10<16이므로 교환
 
-![image](https://user-images.githubusercontent.com/100903674/159172704-b93ceaed-e7bb-41a4-a310-c3a6619c80bc.png)
 
 
-3부터 시작하여 12보다 큰원소인 16을 찾는다 . 4부터 시작해서 12보다 작은 원소인 4를 찾는다. 더이상 비교할 원소가 없으므로 피벗보다 크거나 같은 원소의 집합과 작거나 캍은 원소의 집합으로 분리될 수 있다. 12와 4를 교환해준다.
 
-![image](https://user-images.githubusercontent.com/100903674/159172722-11c1c90e-0e31-4c0b-8e40-2ca22bc72cab.png)
+압축해보면
 
+![image](https://user-images.githubusercontent.com/100903674/162158224-2ba9a3d3-0eb8-41ee-891f-ac11ffe00a65.png)
 
-작은 원소의 집합중 가장 첫번째 원소인 4를 피벗으로 한다.
 
-![image](https://user-images.githubusercontent.com/100903674/159172742-f5e11151-b0a9-4b96-9dab-34c8d204e228.png)
 
-집합에서 피벗을 제외한 왼쪽부터 시작하여 피벗보다 큰 값 5을 찾고 오른쪽부터 시작하여 피벗보다 작은 수3을 찾는다. 5와 3을 교환한다.
+압축비는 3.2727이다.
 
-![image](https://user-images.githubusercontent.com/100903674/159172776-0c9d7a7c-ddc4-40c5-8bb2-6bc1738d6ceb.png)
+이렇게 커다란 데이터덩어리를 최소한의 데이터 덩어리로 줄일 수 있다.
 
 
+## 추가 예시
+ex) 파일을 입력받는 코드를 추가해 이상한나라의 앨리스의 내용중 한 문장을 간략하게 가져와 허프만 코드화 해보았다.  
+``` 
+Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, "and what is the use of a book," thought Alice, "without pictures or conversations?"  
+```
+컴파일 결과는 아래와 같다.
+![image](https://user-images.githubusercontent.com/101345032/162574659-3d6c4ba7-72df-4335-a14d-f831a1e092ec.PNG)
 
+압축비는 1.919240이다.
 
-집합에서 피벗을 제외한 왼쪽부터 시작하여 피벗보다 큰 값 5을 찾고 오른쪽부터 시작하여 피벗보다 작은 수3을 찾는다. 5와 3을 교환한다.
-더이상 비교할 원소들이 없으므로 피벗보다 큰 원소의 집합 피벗보다 작은 원소의 집합으로 나눌 수 있다. 4와 3을 교환해준다
+이처럼 점점 데이터가 커지면 커질수록, 압축비 역시도 효율이 점점 줄어듬을 볼 수 있다.   
+물론 압축을 해서 데이터상으로 이득을 볼 수 있을지 몰라도, 사용자의 번거러움까지 고려했을때 과연 압축하는 것이 이득이 될지 의문이 든다.
 
-  ![image](https://user-images.githubusercontent.com/100903674/159172800-0662d667-c1bd-4750-bf80-12a2b88f0ca1.png)
-                     |
+## 맡은일과 느낀점
 
-큰 원소의 집합중 가장 첫번쨰원소인 10을 피벗으로 삼는다
+### 202101609/신선호
 
-![image](https://user-images.githubusercontent.com/100903674/159172815-0046081a-2dfe-445a-89dd-b4ea1d8223e8.png)
-
-
-큰 원소의 집합에서 5부터 시작하여 10보다 큰 원소인 12를 찾고 16부터 시작하여 작은 원소인 7을 찾는다.
-더이상 비교될 원소가 없으므로 피벗보다 작은 원소의 집합과 큰 원소의 집합으로 나눌 수 있다. 7과 10을 바꿔준다
-
-![image](https://user-images.githubusercontent.com/100903674/159172846-7c863d21-3da5-4172-9dd6-1529bf1f7c4a.png)
-
-
-정렬되지 않은 작은 원소의 집합중 첫번쨰 값인 7을 피벗으로 잡는다.
-
-![image](https://user-images.githubusercontent.com/100903674/159172865-537149b2-8452-49e9-a77c-357a80385306.png)
-
-
-5부터 시작하여 7보다 큰 값인 10이 다른 집합에 있고 5부터 시작하여 작은 값인 5를 찾았으므로 더이상 비교가 불가능므로 피벗보다 작거나 큰 집합을 나눌 수 있다.
-
-7과 5를 교환한다.
-
-![image](https://user-images.githubusercontent.com/100903674/159172884-f79624ac-6994-4c16-b40a-d025eda3ec30.png)
-
-
-7개의 원소에 대한 정렬이 완료되었다.
-
-* 퀵 정렬의 시간 복잡도
-
-피벗값을 어떻게 설정하느냐에 따라 시간 복잡도가 O(n^2)이나 O(nlog(n))으로 달라진다.
-
-
-## 선택 문제 알고리즘
-입력값들중 k번째로 크거나 작은  원소를 찾는 알고리즘이다.
-
-히나의 값을 무작위로 피벗으로 정한뒤 피벗보다 크거나 작은 원소의 집합으로 나누어 탐색의 범위를 좁혀 더욱 탐색을 쉽게한다.
-
-* 선택 문제 알고리즘의 과정
-
-다음과 같이 리스트가 주어지고 두번쨰로 작은 원소를 구한다. 이떄 k=2
-
-![image](https://user-images.githubusercontent.com/100903674/159172920-23320e47-323a-4694-bd79-f9bfc06bc1bd.png)
-
-
-
-4를  무작위로 pivot으로 설정한다. 
-
-![image](https://user-images.githubusercontent.com/100903674/159172968-8b15ca51-c6ab-4303-b2ac-706ff4be6e59.png)
-
-
-pivot인 4를 기준으로 작은 원소의 집합과 큰 원소의 집합으로 나눈다.
-
-![image](https://user-images.githubusercontent.com/100903674/159172996-97bbd4cb-c165-43f8-899d-e57450d292b7.png)
-
-
-작은 원소의 집합의 개수를 a라 하고 pivot의 개수를 m이라 할때 
-k<a라면 작은 원소의 집합에서
-a+m<k라면 큰 원소의 집합에서
-k번째 값이 작은 원소의 집합에도 큰 원소의 집합에도 없다면 pivot값이 k번째 작은 값이다.
-
-a=3
-k=2
-k<=a 이므로 
-k번째 작은 값은 작은 원소의 집합에 있다.
-
-기존의 큰 원소의 집합과 pivot은 무시해준다.
-
-
-3을 무작위로 pivot으로 설정해준다
-
-![image](https://user-images.githubusercontent.com/100903674/159173111-6e51b469-96ca-47cf-a820-1bf9404a2a2f.png)
-
-
-
-pivot인 3을 기준으로 pivot보다 작은 원소의 집합과 큰 원소의 집합으로 나누어준다.
-
-![image](https://user-images.githubusercontent.com/100903674/159173131-6920adf5-2460-4e80-9423-e68030628246.png)
-
-k=2
-작은 원소의 집합의 개수 a=2이므로
-2번째 작은 원소의 집합의 개수는 작은 원소의 집합에 있다.
-기존의 피벗과 큰 원소의 집합은 무시해준다.
-
-k=2를 무작위로 pivot으로 설정한다.
-
-![image](https://user-images.githubusercontent.com/100903674/159173157-026be1b1-979b-42b9-9170-f192653d3780.png)
-
-
-pivot인 2을 기준으로 pivot보다 작은 원소의 집합과 큰 원소의 집합으로 나누어준다.
-
-![image](https://user-images.githubusercontent.com/100903674/159173178-08df2535-f0b7-4708-8135-1652b9b65b04.png)
-
-
-a=1이므로 작은 원소의 집합에는 k번쨰 작은 값이 없으므로
-
-k번째 작은 값은 pivot 값인 2이다.
-
-
-* 선택 문제 알고리즘의 시간 복잡도
-
-평균적으로 O(n)이지만 피벗 값을 잘못 설정하면 O(n^2)까지 갈 수 있다.
-
-
-## 최근접 점의 쌍 문제
-
-최근접 점의 쌍을 찾는 문제는 2차원 평면상의 n개의 점이 입력으로 주어질 때, 거리가 가장 가까운 한 쌍의 점을 찾는 문제이다.
-
-
-
-![image](https://user-images.githubusercontent.com/100903674/159174296-24f1e633-69e6-4369-8db3-b7b397a24eda.png)
-
-
-가장 간단한 방법은 하나씩 대조하는 방법이다. 하지만 나씩 대조해서 찾기에는 N(N-1)/2번 시행해야하므로 시간 복잡도는 o(N^2)로 복잡해진다.
-
-![image](https://user-images.githubusercontent.com/100903674/159174388-d8c75d18-1239-41e0-8388-9059a8a9ec9d.png)
-
-점이 있는 공간을 분할하여  각각의 공간중에서 가장 가까운점 두개를 취합해 나머지 공간들의 점들과 비교해서 가장 가까운 거리의 두점을 구할 수 있다. 이때 시간복잡도는 O(n(logn)^2)로 단순 대조방식보다 훨씬 단순해진다.
+허프만 코드를 이루는 각 함수에 대한 분석을 하고 데이터파일을 허프만 코드로 압축을 하여 얻는 실용성은 무엇인지에 대해 조사하였습니다. 압축이 어떻게 이뤄지는지에 대해 알고 압축의 실용성을 직접 체감하면서 허프만 개발자의 위용을 몸소 느꼈습니다. 허프만 코드같은 훌륭한 알고리즘을 훌륭한 개발자가 되서 저도 개발하고 싶습니다.
 
 
 
