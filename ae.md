@@ -404,7 +404,6 @@ else {
 	printf("압축 결과 : %s\n", encoding); //인코딩 한 이진수 배열 출력
 	printf("압축률: %d", (num * 8) / num2);
 	}
-	
 
 	return 0;
 }
