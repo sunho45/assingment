@@ -538,5 +538,5 @@ Alice was beginning to get very tired of sitting by her sister on the bank, and 
 이처럼 점점 데이터가 커지면 커질수록, 압축비 역시도 효율이 점점 줄어듬을 볼 수 있다.   
 물론 압축을 해서 데이터상으로 이득을 볼 수 있을지 몰라도, 사용자의 번거러움까지 고려했을때 과연 압축하는 것이 이득이 될지 의문이 든다.
 
-
+## 맡은일과 
 
