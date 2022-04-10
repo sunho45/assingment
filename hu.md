@@ -78,7 +78,7 @@ node* make_Huffman_tree(char arr[])
 					//min인덱스 빈도수 보다 빈도수가 작은 경우
 					min = j;
 
-		//두번째로 작은 수 찾기
+		//두번째로 작은 수 찾기.
 		j = 0;
 		while (check[j] == -1 || j == min) j++;
 		//합쳐진 노드와 최소 노드 제외한 배열 중 가장 앞 index
@@ -132,7 +132,7 @@ void decode(char* str, node* root)
 {
 	int i = 0;
 	node* j = root;
-	while (str[i] != '\0') //문자의 끝이 아닌 경우
+	while (str[i] != '\0') //문자의 끝이 아닌 경우.
 	{
 		if (str[i] == '0') //문자가 0인 경우
 			j = j->left; //왼쪽 자식으로 이동
@@ -526,7 +526,7 @@ ex) 예를들어 문자열  ABBCCDDDEEEEFFFFFF을 압축해보자
 
 
 ## 추가 예시
-ex) 이상한나라의 앨리스의 내용중 한 문장을 간략하게 가져와 허프만 코드화 해보았다.  
+ex) 파일을 입력받는 코드를 추가해 이상한나라의 앨리스의 내용중 한 문장을 간략하게 가져와 허프만 코드화 해보았다.  
 ``` 
 Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, "and what is the use of a book," thought Alice, "without pictures or conversations?"  
 ```
@@ -537,6 +537,12 @@ Alice was beginning to get very tired of sitting by her sister on the bank, and 
 
 이처럼 점점 데이터가 커지면 커질수록, 압축비 역시도 효율이 점점 줄어듬을 볼 수 있다.   
 물론 압축을 해서 데이터상으로 이득을 볼 수 있을지 몰라도, 사용자의 번거러움까지 고려했을때 과연 압축하는 것이 이득이 될지 의문이 든다.
+
+## 맡은일과 느낀점
+
+### 202101609/신선호
+
+허프만 코드를 이루는 각 함수에 대한 분석을 하고 데이터파일을 허프만 코드로 압축을 하여 얻는 실용성은 무엇인지에 대해 조사하였습니다. 압축이 어떻게 이뤄지는지에 대해 알고 압축의 실용성을 직접 체감하면서 허프만 개발자의 위용을 몸소 느꼈습니다. 허프만 코드같은 훌륭한 알고리즘을 훌륭한 개발자가 되서 저도 개발하고 싶습니다.
 
 
 
