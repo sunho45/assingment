@@ -1,475 +1,231 @@
-# 허프만코드
+# 분할정복
+
+## 합병정렬 
+* 합병정렬의 정의
+
+입력이 2개의 부분리스트로 분할 되고, 부분리스트의 크기가 1/2로 감소하는 분할 정복 알고리즘이다. n개의 숫자를 n/2개의 부분리스트를 분할하고,각각의 부분리스트를 재귀적으로 합병한 후 2개의 정렬된 부분을 합병하는 정렬 
+
+* 합병정렬의 진행과정
+
+Step1. 분할: 배열을 반으로 분할한다. 분할한 배열의 원소는 각각 n/2이다.
+
+Step2. 정렬: 분할한 배열을 각각 따로 정렬한다. 분할한 배열에 원소의 크기가 2개 이상이면 순환 호출을 이용하여 다시 분할 정복 알고리즘을 적용한다.
+
+Step3. 결합: 정렬된 부분 배열들을 하나의 배열로 합병하여 정렬한다.
+
+ex)
+하나의 리스트가 주어져있다.
+
+![image](https://user-images.githubusercontent.com/100903674/159172023-769cba27-239f-464b-b52e-88722d225f2e.png)
 
 
-## 허프만코드 in c
+
+
+두개의 부분리스트로 분할 된다.
+
+![image](https://user-images.githubusercontent.com/100903674/159172294-7cafd5eb-1f47-416a-b440-ca43affc50ee.png)
+
+
+두개의 부분리스트들이 분열되어 4개의 부분리스트로 분할되었다
+
+![image](https://user-images.githubusercontent.com/100903674/159172448-441636f9-34fe-4f6b-938a-074ec16c8021.png)
+
+
+분할이 끝났다. 
+ 
+ ![image](https://user-images.githubusercontent.com/100903674/159172336-718e610d-8bf8-4600-a5e7-f05449bbd831.png)
+
+
+이제는 정렬과 결합을 할 차례이다.
+
+각각의 하나의 원소들이 왼쪽부터 차례대로 두개씩 정렬되고 결합된다.
+
+![image](https://user-images.githubusercontent.com/100903674/159172390-86436d19-5618-4a4d-83d1-325c65470b15.png)
+
+
+두개의 원소를 가진 부분리스트들이 4개의 원소를 가진 부분리스트들로 정렬되고 결합한다.
+
+![image](https://user-images.githubusercontent.com/100903674/159172566-a9f8d135-ec97-42c1-9fe6-83c470058338.png)
 
  
-```
-#include <stdio.h>
-#include <stdlib.h>
-#define MAX_ELEMENT 200
-#pragma warning(disable:4996)
-typedef struct TreeNode
-{
-	int weight;
-	char ch;
-	struct TreeNode* left;
-	struct TreeNode* right;
-} TreeNode;
-
-typedef struct
-{
-	TreeNode* ptree;
-	char ch;
-	int key;
-} element;
-
-typedef struct
-{
-	element heap[MAX_ELEMENT];
-	int heap_size;
-} HeapType;
-
-// 생성 함수
-HeapType* create()
-{
-	return (HeapType*)malloc(sizeof(HeapType));
-}
-// 초기화 함수
-void init(HeapType* h)
-{
-	h->heap_size = 0;
-}
-// 삽입 함수
-void insert_min_heap(HeapType* h, element item)
-{
-	int i;
-	i = ++(h->heap_size);
-	while ((i != 1) && (item.key < h->heap[i / 2].key)) {
-		h->heap[i] = h->heap[i / 2];
-		i /= 2;
-	}
-	h->heap[i] = item;
-}
-// 삭제 함수
-element delete_min_heap(HeapType* h)
-{
-	int parent, child;
-	element item, temp;
-
-	item = h->heap[1];
-	temp = h->heap[(h->heap_size)--];
-	parent = 1;
-	child = 2;
-	while (child <= h->heap_size)
-	{
-		if ((child > h->heap_size) &&
-			(h->heap[child].key) > h->heap[child + 1].key)
-			child++;
-		if (temp.key < h->heap[child].key) break;
-		h->heap[parent] = h->heap[child];
-		parent = child;
-		child *= 2;
-	}
-	h->heap[parent] = temp;
-	return item;
-}
-// 이진 트리 생성 함수
-TreeNode* make_tree(TreeNode* left, TreeNode* right)
-{
-	TreeNode* node = (TreeNode*)malloc(sizeof(TreeNode));
-	node->left = left;
-	node->right = right;
-	return node;
-}
-// 이진 트리 제거 함수
-void destroy_tree(TreeNode* root)
-{
-	if (root == NULL) return;
-	destroy_tree(root->left);
-	destroy_tree(root->right);
-	free(root);
-}
-int is_leaf(TreeNode* root)
-{
-	return !(root->left) && !(root->right);
-}
-void print_array(int codes[], int n)
-{
-	for (int i = 0; i < n; i++)
-		printf("%d", codes[i]);
-	printf("\n");
-}
-
-void print_codes(TreeNode* root, int codes[], int top)
-{
-	// 0을 저장하고 순환호출 
-	if (root->left)
-	{
-		codes[top] = 0;
-		print_codes(root->left, codes, top + 1);
-	}
-
-	// 1을 저장하고 순환호출 
-	if (root->right)
-	{
-		codes[top] = 1;
-		print_codes(root->right, codes, top + 1);
-	}
-
-	// 단말노드이면 코드를 출력 
-	if (is_leaf(root))
-	{
-		printf("%c: ", root->ch);
-		print_array(codes, top);
-	}
-}
-// 허프만 코드 생성 함수
-void huffman_tree(int freq[], char ch_list[], int n)
-{
-	int i;
-	TreeNode* node, * x;
-	HeapType* heap;
-	element e, e1, e2;
-	int codes[100];
-	int top = 0;
-
-	heap = create();
-	init(heap);
-	for (i = 0; i < n; i++)
-	{
-		node = make_tree(NULL, NULL);
-		e.ch = node->ch = ch_list[i];
-		e.key = node->weight = freq[i];
-		e.ptree = node;
-		insert_min_heap(heap, e);
-	}
-	for (i = 1; i < n; i++)
-	{
-		// 최소값을 가지는 두개의 노드를 삭제
-		e1 = delete_min_heap(heap);
-		e2 = delete_min_heap(heap);
-		// 두개의 노드를 합침
-		x = make_tree(e1.ptree, e2.ptree);
-		e.key = x->weight = e1.key + e2.key;
-		e.ptree = x;
-		printf("%d+%d->%d \n", e1.key, e2.key, e.key);
-		insert_min_heap(heap, e);
-	}
-	e = delete_min_heap(heap); // 최종 트리
-	print_codes(e.ptree, codes, top);
-	destroy_tree(e.ptree);
-	free(heap);
-}
-int main() {
-	int size = 0;
-	char a[200];
-	scanf("%s", a);
-	char ch_list[26] = { NULL };
-	int num = 0; \
-		int freq[26] = { 0 };
-	int k = 0;
-	int freql[26] = { 0 };
-	for (int i = 0; a[i] != NULL; i++) {
-		if (a[i] == ' ') {
-
-		}
-		else {
-			int num = 1;
-			for (int j = 0; j < i; j++) {
-				if (a[j] == a[i]) {
-
-					num++;
-				}
-
-
-			}
-
-
-			if (num == 1) {
-
-				ch_list[k] = a[i];
-				k++;
-				size++;
-			}
-			freq[a[i] - 'A']++;
-
-
-		}
-	}
-	printf("%d\n", freq[4]);
-	for (int k = 0; k < 26; k++) {
-		for (int p = 0; p < 26; p++) {
-			if (ch_list[k] == 'A' + p) {
-				freql[k] = freq[p];
-
-			}
-		}
-	}
-
-
-	huffman_tree(freql, ch_list, size);
-	return 0;
-
-}
-```
-
-
-```
-typedef struct TreeNode
-{
-	int weight;
-	char ch;
-	struct TreeNode* left;
-	struct TreeNode* right;
-} TreeNode;
-```
-다음과 같이 노드의 구조체를 만들어준다
-
-```
-
-HeapType* create()
-{
-	return (HeapType*)malloc(sizeof(HeapType));
-}
-
-
-```
-
-구조체를 생성하는 함수이다.
-```
-
-void init(HeapType* h)
-{
-	h->heap_size = 0;
-}
-```
-힙을 초기화 시켜준다.
-```
-void insert_min_heap(HeapType* h, element item)
-{
-	int i;
-	i = ++(h->heap_size);
-	while ((i != 1) && (item.key < h->heap[i / 2].key)) {
-		h->heap[i] = h->heap[i / 2];
-		i /= 2;
-	}
-	h->heap[i] = item;
-}
-```
-최소힙에 삽입시키는 함수로 삽입된 함수는 힙의 마지막 위치에 삽입된다. 삽입된 값이 부모노드보다 작다면 부모노드와 자신을 교환시켜준다.
-
-
-```
-element delete_min_heap(HeapType* h)
-{
-	int parent, child;
-	element item, temp;
-
-	item = h->heap[1];
-	temp = h->heap[(h->heap_size)--];
-	parent = 1;
-	child = 2;
-	while (child <= h->heap_size)
-	{
-		if ((child > h->heap_size) &&
-			(h->heap[child].key) > h->heap[child + 1].key)
-			child++;
-		if (temp.key < h->heap[child].key) break;
-		h->heap[parent] = h->heap[child];
-		parent = child;
-		child *= 2;
-	}
-	h->heap[parent] = temp;
-	return item;
-}
-```
-최소 힙에서 삭제시켜주는 함수로 최소히프에서 삭제 연산은 루트노드 즉 힙에서 최솟값을 삭제시킨다. 루트노드의 위치에 힙에서 마지막 위치의 값을 넣은 다음 최소힙의 규칙에 따라 배열시킨다.
-```
-TreeNode* make_tree(TreeNode* left, TreeNode* right)
-{
-	TreeNode* node = (TreeNode*)malloc(sizeof(TreeNode));
-	node->left = left;
-	node->right = right;
-	return node;
-}
-```
-제일 작은 값과 두번째로 작은 값을가진 노드를 왼쪽부터 오른쪽으로 자식노드로 구성시켜 트리를 만든다.
-
-```
-int is_leaf(TreeNode* root)
-{
-	return !(root->left) && !(root->right);
-}
-```
-단말노드인지 true or false를 나타내는 함수
-
-
-```
-void print_array(int codes[], int n)
-{
-	for (int i = 0; i < n; i++)
-		printf("%d", codes[i]);
-	printf("\n");
-}
-```
-주어진 코드값을 출력시키는 함수
-
-
-void print_codes(TreeNode* root, int codes[], int top)
-{
-	// 0을 저장하고 순환호출 
-	if (root->left)
-	{
-		codes[top] = 0;
-		print_codes(root->left, codes, top + 1);
-	}
-
-	// 1을 저장하고 순환호출 
-	if (root->right)
-	{
-		codes[top] = 1;
-		print_codes(root->right, codes, top + 1);
-	}
-
-	// 단말노드이면 코드를 출력 
-	if (is_leaf(root))
-	{
-		printf("%c: ", root->ch);
-		print_array(codes, top);
-	}
-}
-
-주어진 트리에 왼쪽인지 오른쪽인지에 따라 가중치 0,1을 매긴다.
-```
-void huffman_tree(int freq[], char ch_list[], int n)
-{
-	int i;
-	TreeNode* node, * x;
-	HeapType* heap;
-	element e, e1, e2;
-	int codes[100];
-	int top = 0;
-
-	heap = create();
-	init(heap);
-	for (i = 0; i < n; i++)
-	{
-		node = make_tree(NULL, NULL);
-		e.ch = node->ch = ch_list[i];
-		e.key = node->weight = freq[i];
-		e.ptree = node;
-		insert_min_heap(heap, e);
-	}
-	for (i = 1; i < n; i++)
-	{
-		// 최소값을 가지는 두개의 노드를 삭제
-		e1 = delete_min_heap(heap);
-		e2 = delete_min_heap(heap);
-		// 두개의 노드를 합침
-		x = make_tree(e1.ptree, e2.ptree);
-		e.key = x->weight = e1.key + e2.key;
-		e.ptree = x;
-		printf("%d+%d->%d \n", e1.key, e2.key, e.key);
-		insert_min_heap(heap, e);
-	}
-	e = delete_min_heap(heap); // 최종 트리
-	print_codes(e.ptree, codes, top);
-	destroy_tree(e.ptree);
-	free(heap);
-}
-```
-최소 히프에서 가장작은 값과 두번쨰로 작은 값을 골라낸 다음 트리를 만든다. 이러한 과정을 반복해서 허프만 트리를 만든다.
-
-```
-int main() {
-	int size = 0;
-	char a[200];
-	scanf("%s", a);
-	char ch_list[26] = { NULL };
-	int num = 0; \
-		int freq[26] = { 0 };
-	int k = 0;
-	int freql[26] = { 0 };
-```
-```
-	for (int i = 0; a[i] != NULL; i++) {
-		if (a[i] == ' ') {
-
-		}
-		else {
-			int num = 1;
-			for (int j = 0; j < i; j++) {
-				if (a[j] == a[i]) {
-
-					num++;
-				}
-
-
-			}
-
-
-			if (num == 1) {
-
-				ch_list[k] = a[i];
-				k++;
-				size++;
-			}
-			freq[a[i] - 'A']++;
-
-
-		}
-	}
-
-
-
-	for (int k = 0; k < 26; k++) {
-		for (int p = 0; p < 26; p++) {
-			if (ch_list[k] == 'A' + p) {
-				freql[k] = freq[p];
-
-			}
-		}
-	}
-```
-문자열에서 어떤 문자가 쓰였는지 알아내고 문자의 빈도수를 뽑아낸다.
-```
-	huffman_tree(freql, ch_list, size);
-	return 0;
-
-}
-```
-
-각 문자의 이진코드를 출력한다.
-
-## 압축비
-
-예를 들어 문자열 DDDDAAAEEEEE을 입력해보자. 아스키코드는 1바이트 즉 8비트 이진문자 0,1은 1비트를 할당한다.
-즉 압축비는
-![image](https://user-images.githubusercontent.com/100903674/162156968-d3931d17-ae9c-4eb8-8a4a-d876cc3c50f3.png)
-
-
-
-빈도수는 
-A|D|E
----|---|---|
-3|4|5
-
-A|D|E
----|---|---|
-10|11|0
-
-
-DDDDAAAEEEEE을 인코딩하면
-1111111110101000000
-
-
-즉 압축비는
- (12*8) /19=5.05이다.
-
-
-
-![image](https://user-images.githubusercontent.com/100903674/162157628-07efda64-547e-4c90-a067-17d7ec8f73f2.png)
+최종적으로 정렬된 하나의 부분리스트가 만들어진다.
+
+![image](https://user-images.githubusercontent.com/100903674/159172404-2c423135-7541-40cb-8f44-db0a07e44f1e.png)
+
+* 합병정렬의 시간 복잡도
+
+대체로 시간 복잡도는 O(nlog(n))
+
+
+
+
+## 퀵 정렬
+
+* 퀵정렬의 정의
+
+하나의 리스트를 피벗(pivot)을 기준으로 두 개의 부분리스트로 나누어 하나는 피벗보다 작은 값들의 부분리스트, 다른 하나는 피벗보다 큰 값들의 부분리스트로 정렬한 다음, 각 부분리스트에 대해 다시 위 처럼 재귀적으로 수행하는 정렬
+
+
+* 퀵정렬의 과정
+
+퀵 정렬은 어느 값을 pivot으로 정하는지에 따라 달라진다. 이번은 퀵 정렬중 중요한 함수인 **partiton 함수**를 사용한다.
+ex)
+다음과 같이 리스트가 주어졌다
+
+![image](https://user-images.githubusercontent.com/100903674/159172669-8f0cf37a-2c16-4c7a-b5fa-851c4b275f55.png)
+
+
+전체 원소에서 첫번째 값인 12를 피벗으로 정한다.
+
+![image](https://user-images.githubusercontent.com/100903674/159172691-b9b025af-94ea-4038-8979-0e23bdc7a7e5.png)
+
+
+왼쪽부터 시작하여 5보다 큰 원소인 16을 찾고 오른쪽부터 12보다 작은 원소인 10을 찾는다. 10<16이므로 교환
+
+![image](https://user-images.githubusercontent.com/100903674/159172704-b93ceaed-e7bb-41a4-a310-c3a6619c80bc.png)
+
+
+3부터 시작하여 12보다 큰원소인 16을 찾는다 . 4부터 시작해서 12보다 작은 원소인 4를 찾는다. 더이상 비교할 원소가 없으므로 피벗보다 크거나 같은 원소의 집합과 작거나 캍은 원소의 집합으로 분리될 수 있다. 12와 4를 교환해준다.
+
+![image](https://user-images.githubusercontent.com/100903674/159172722-11c1c90e-0e31-4c0b-8e40-2ca22bc72cab.png)
+
+
+작은 원소의 집합중 가장 첫번째 원소인 4를 피벗으로 한다.
+
+![image](https://user-images.githubusercontent.com/100903674/159172742-f5e11151-b0a9-4b96-9dab-34c8d204e228.png)
+
+집합에서 피벗을 제외한 왼쪽부터 시작하여 피벗보다 큰 값 5을 찾고 오른쪽부터 시작하여 피벗보다 작은 수3을 찾는다. 5와 3을 교환한다.
+
+![image](https://user-images.githubusercontent.com/100903674/159172776-0c9d7a7c-ddc4-40c5-8bb2-6bc1738d6ceb.png)
+
+
+
+
+집합에서 피벗을 제외한 왼쪽부터 시작하여 피벗보다 큰 값 5을 찾고 오른쪽부터 시작하여 피벗보다 작은 수3을 찾는다. 5와 3을 교환한다.
+더이상 비교할 원소들이 없으므로 피벗보다 큰 원소의 집합 피벗보다 작은 원소의 집합으로 나눌 수 있다. 4와 3을 교환해준다
+
+  ![image](https://user-images.githubusercontent.com/100903674/159172800-0662d667-c1bd-4750-bf80-12a2b88f0ca1.png)
+                     |
+
+큰 원소의 집합중 가장 첫번쨰원소인 10을 피벗으로 삼는다
+
+![image](https://user-images.githubusercontent.com/100903674/159172815-0046081a-2dfe-445a-89dd-b4ea1d8223e8.png)
+
+
+큰 원소의 집합에서 5부터 시작하여 10보다 큰 원소인 12를 찾고 16부터 시작하여 작은 원소인 7을 찾는다.
+더이상 비교될 원소가 없으므로 피벗보다 작은 원소의 집합과 큰 원소의 집합으로 나눌 수 있다. 7과 10을 바꿔준다
+
+![image](https://user-images.githubusercontent.com/100903674/159172846-7c863d21-3da5-4172-9dd6-1529bf1f7c4a.png)
+
+
+정렬되지 않은 작은 원소의 집합중 첫번쨰 값인 7을 피벗으로 잡는다.
+
+![image](https://user-images.githubusercontent.com/100903674/159172865-537149b2-8452-49e9-a77c-357a80385306.png)
+
+
+5부터 시작하여 7보다 큰 값인 10이 다른 집합에 있고 5부터 시작하여 작은 값인 5를 찾았으므로 더이상 비교가 불가능므로 피벗보다 작거나 큰 집합을 나눌 수 있다.
+
+7과 5를 교환한다.
+
+![image](https://user-images.githubusercontent.com/100903674/159172884-f79624ac-6994-4c16-b40a-d025eda3ec30.png)
+
+
+7개의 원소에 대한 정렬이 완료되었다.
+
+* 퀵 정렬의 시간 복잡도
+
+피벗값을 어떻게 설정하느냐에 따라 시간 복잡도가 O(n^2)이나 O(nlog(n))으로 달라진다.
+
+
+## 선택 문제 알고리즘
+입력값들중 k번째로 크거나 작은  원소를 찾는 알고리즘이다.
+
+히나의 값을 무작위로 피벗으로 정한뒤 피벗보다 크거나 작은 원소의 집합으로 나누어 탐색의 범위를 좁혀 더욱 탐색을 쉽게한다.
+
+* 선택 문제 알고리즘의 과정
+
+다음과 같이 리스트가 주어지고 두번쨰로 작은 원소를 구한다. 이떄 k=2
+
+![image](https://user-images.githubusercontent.com/100903674/159172920-23320e47-323a-4694-bd79-f9bfc06bc1bd.png)
+
+
+
+4를  무작위로 pivot으로 설정한다. 
+
+![image](https://user-images.githubusercontent.com/100903674/159172968-8b15ca51-c6ab-4303-b2ac-706ff4be6e59.png)
+
+
+pivot인 4를 기준으로 작은 원소의 집합과 큰 원소의 집합으로 나눈다.
+
+![image](https://user-images.githubusercontent.com/100903674/159172996-97bbd4cb-c165-43f8-899d-e57450d292b7.png)
+
+
+작은 원소의 집합의 개수를 a라 하고 pivot의 개수를 m이라 할때 
+k<a라면 작은 원소의 집합에서
+a+m<k라면 큰 원소의 집합에서
+k번째 값이 작은 원소의 집합에도 큰 원소의 집합에도 없다면 pivot값이 k번째 작은 값이다.
+
+a=3
+k=2
+k<=a 이므로 
+k번째 작은 값은 작은 원소의 집합에 있다.
+
+기존의 큰 원소의 집합과 pivot은 무시해준다.
+
+
+3을 무작위로 pivot으로 설정해준다
+
+![image](https://user-images.githubusercontent.com/100903674/159173111-6e51b469-96ca-47cf-a820-1bf9404a2a2f.png)
+
+
+
+pivot인 3을 기준으로 pivot보다 작은 원소의 집합과 큰 원소의 집합으로 나누어준다.
+
+![image](https://user-images.githubusercontent.com/100903674/159173131-6920adf5-2460-4e80-9423-e68030628246.png)
+
+k=2
+작은 원소의 집합의 개수 a=2이므로
+2번째 작은 원소의 집합의 개수는 작은 원소의 집합에 있다.
+기존의 피벗과 큰 원소의 집합은 무시해준다.
+
+k=2를 무작위로 pivot으로 설정한다.
+
+![image](https://user-images.githubusercontent.com/100903674/159173157-026be1b1-979b-42b9-9170-f192653d3780.png)
+
+
+pivot인 2을 기준으로 pivot보다 작은 원소의 집합과 큰 원소의 집합으로 나누어준다.
+
+![image](https://user-images.githubusercontent.com/100903674/159173178-08df2535-f0b7-4708-8135-1652b9b65b04.png)
+
+
+a=1이므로 작은 원소의 집합에는 k번쨰 작은 값이 없으므로
+
+k번째 작은 값은 pivot 값인 2이다.
+
+
+* 선택 문제 알고리즘의 시간 복잡도
+
+평균적으로 O(n)이지만 피벗 값을 잘못 설정하면 O(n^2)까지 갈 수 있다.
+
+
+## 최근접 점의 쌍 문제
+
+최근접 점의 쌍을 찾는 문제는 2차원 평면상의 n개의 점이 입력으로 주어질 때, 거리가 가장 가까운 한 쌍의 점을 찾는 문제이다.
+
+
+
+![image](https://user-images.githubusercontent.com/100903674/159174296-24f1e633-69e6-4369-8db3-b7b397a24eda.png)
+
+
+가장 간단한 방법은 하나씩 대조하는 방법이다. 하지만 나씩 대조해서 찾기에는 N(N-1)/2번 시행해야하므로 시간 복잡도는 o(N^2)로 복잡해진다.
+
+![image](https://user-images.githubusercontent.com/100903674/159174388-d8c75d18-1239-41e0-8388-9059a8a9ec9d.png)
+
+점이 있는 공간을 분할하여  각각의 공간중에서 가장 가까운점 두개를 취합해 나머지 공간들의 점들과 비교해서 가장 가까운 거리의 두점을 구할 수 있다. 이때 시간복잡도는 O(n(logn)^2)로 단순 대조방식보다 훨씬 단순해진다.
+
+
+
+
 
 
 
