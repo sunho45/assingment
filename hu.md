@@ -5,33 +5,32 @@
 전체 코드
 ```
 #include<stdio.h>
-#include <stdlib.h>
-
+#include<stdlib.h>
 #include<string.h>
 #pragma warning(disable:4996)
-#define MAX 5000
-#define alph_num 26
+#define MAX 10000
+#define askii 122 //소문자z까지의 아스키코드
 //트리 노드
 typedef struct node
 {
-	char alphabet;  //알파벳
+	char character;  // 문자
 	int freq;//빈도수
 	struct node* left; //왼쪽 자식 노드
 	struct node* right; //오른쪽 자식 노드
 }node;
 
 node* make_Huffman_tree(char arr[]);  //허프만 코드 트리 생성(압축하고자 하는 문자열)
-node* makenode(char alphabet, int freq, struct node* left, struct node* right); //새 노드 생성
-void make_table(node* n, char str[], int len, char* table[]); //알파벳 별 가변길이 코드 배열 생성
+node* makenode(char character, int freq, struct node* left, struct node* right); //새 노드 생성
+void make_table(node* n, char str[], int len, char* table[]); //문자 별 가변길이 코드 배열 생성
 void decode(char* str, node* root); //디코드함수
-node node_arr[alph_num] = { NULL };
+node node_arr[askii] = { NULL };
 int ind = 0;//문자 갯수
 
-//새 노드 생성(알파벳,빈도수,왼쪽 자식 노드,오른쪽 자식 노드) 
-node* makenode(char alphabet, int freq, struct node* left, struct node* right)
+//새 노드 생성(문자,빈도수,왼쪽 자식 노드,오른쪽 자식 노드) 
+node* makenode(char character, int freq, struct node* left, struct node* right)
 {
 	node* new_node = (node*)malloc(sizeof(node));
-	new_node->alphabet = alphabet;
+	new_node->character = character;
 	new_node->freq = freq;
 	new_node->left = left;
 	new_node->right = right;
@@ -46,24 +45,24 @@ node* make_Huffman_tree(char arr[])
 	int temp_n = 0;
 	int min = 0;  //제일 빈도수가 작은 index
 	int min2 = 0; //두 번째로 빈도수가 작은 index
-	int fre[alph_num] = { 0 };  //알파벳(A~Z) 빈도 수
-	int check[alph_num] = { 0 };  //합쳐졌는지 확인(합쳐져서 살펴 볼 필요가 없으면 -1)
-	node* tree[alph_num] = { NULL };  //비교할 노드 배열
+	int fre[askii] = { 0 };  //문자(space~z) 빈도 수
+	int check[askii] = { 0 };  //합쳐졌는지 확인(합쳐져서 살펴 볼 필요가 없으면 -1)
+	node* tree[askii] = { NULL };  //비교할 노드 배열
 	node* new_node; //새 노드
 
 	while (arr[i] != NULL)
 	{
 		//빈도수 구하기
-		fre[arr[i] - 'A']++;
+		fre[arr[i]]++;
 		i++;
 	}
-	for (int i = 0; i < alph_num; i++)
+	for (int i = 32; i < askii; i++)
 	{
-		//알파벳이 존재하면
+		//문자가 존재하면
 		if (fre[i] != 0)
 		{
-			node_arr[ind] = *makenode(i + 'A', fre[i], NULL, NULL);
-			tree[ind++] = makenode(i + 'A', fre[i], NULL, NULL); //노드 생성
+			node_arr[ind] = *makenode(i, fre[i], NULL, NULL);//space부터 z까지
+			tree[ind++] = makenode(i, fre[i], NULL, NULL); //노드 생성
 		}
 	}
 	for (i = 0; i < ind - 1; i++)
@@ -79,7 +78,7 @@ node* make_Huffman_tree(char arr[])
 					//min인덱스 빈도수 보다 빈도수가 작은 경우
 					min = j;
 
-		//두번째로 작은 수 찾기
+		//두번째로 작은 수 찾기.
 		j = 0;
 		while (check[j] == -1 || j == min) j++;
 		//합쳐진 노드와 최소 노드 제외한 배열 중 가장 앞 index
@@ -106,8 +105,8 @@ void make_table(node* n, char str[], int len, char* table[])
 	if (n->left == NULL && n->right == NULL) //n이 단노드인 경우
 	{
 		str[len] = '\0'; //문장의 끝을 str끝에 넣어주고
-						 //단 노드의 알파벳을 확인하여 table의 적절한 위치에 str문자열을 넣는다.
-		strcpy(table[(n->alphabet) - 'A'], str);
+						 //단 노드의 문자를 확인하여 table의 적절한 위치에 str문자열을 넣는다.
+		strcpy(table[(n->character)], str);
 	}
 	else //단 노드가 아닌 경우
 	{
@@ -125,7 +124,7 @@ void make_table(node* n, char str[], int len, char* table[])
 		}
 	}
 }
-//알파벳 별 가변길이 코드 배열 생성
+//문자 별 가변길이 코드 배열 생성
 //(트리 루트 노드,가변 길이 코드 문자열,문자열에 들어갈 위치, 저장 될 배열)
 
 //디코드함수(디코딩 하고 싶은 문자열, 트리 루트 노드)
@@ -133,7 +132,7 @@ void decode(char* str, node* root)
 {
 	int i = 0;
 	node* j = root;
-	while (str[i] != '\0') //문자의 끝이 아닌 경우
+	while (str[i] != '\0') //문자의 끝이 아닌 경우.
 	{
 		if (str[i] == '0') //문자가 0인 경우
 			j = j->left; //왼쪽 자식으로 이동
@@ -141,7 +140,7 @@ void decode(char* str, node* root)
 			j = j->right; //오른쪽 자식으로 이동
 		if (j->left == NULL && j->right == NULL) //단 노드인 경우
 		{
-			printf("%c", j->alphabet); //단 노드의 알파벳 출력
+			printf("%c", j->character); //단 노드의 문자 출력
 			j = root;
 		}
 		i++;
@@ -153,32 +152,34 @@ int main()
 {
 
 	char arr[MAX]; //압축하고자 하는 문자열
-	char* code[alph_num]; //각 알파벳에 대한 가변길이 코드 배열
+	char* code[askii]; //각 문자에 대한 가변길이 코드 배열
 	char str[MAX]; //문자열 변수
 	char encoding[MAX] = ""; //인코딩해서 나온 이진수 배열
 	int i; //반복문 변수
 	char answer; //디코딩 원하는가에 대한 대답 변수
 	node* root;//트리의 루트
-	float num = 1;
-	for (i = 0; i < alph_num; i++)
+	float num = 1.0;
+	for (i = 32; i < askii; i++)
 		code[i] = (char*)malloc(sizeof(char));
 
-	printf("압축하고자 하는 문자열(대문자) : ");
-	scanf("%s", arr); //압축하고자 하는 문자열 입력
+	printf("압축파일: ");
+	scanf("%[^\n]s", arr); //압축하고자 하는 문자열 입력
 	for (int i = 1; arr[i] != NULL; i++) {
 
 
 		num++;
 	}
-	float num2 = 1;
+	float num2 = 1.0;
 	root = make_Huffman_tree(arr); //허프만코드를 이용한 트리 생성
-	make_table(root, str, 0, code); //트리를 사용한 알파벳 별 가변길이 코드 생성
+	make_table(root, str, 0, code); //트리를 사용한 문자 별 가변길이 코드 생성
 
 	i = 0;
 	while (arr[i] != NULL) { //입력받은 문자열이 끝날때까지
-		strcat(encoding, code[arr[i] - 'A']); //문자별 코드 인코딩 문자열 뒤에 넣기
+		
+		strcat(encoding, code[arr[i]]); //문자별 코드 인코딩 문자열 뒤에 넣기
 
 		i++;
+		
 	}
 	for (int o = 1; encoding[o] != NULL; o++) {
 
@@ -193,15 +194,16 @@ int main()
 
 	else {
 		for (i = 0; i < ind; i++)
-			printf("%c : %s\n", node_arr[i].alphabet, code[node_arr[i].alphabet - 'A']);
+			printf("%c : %s\n", node_arr[i].character, code[node_arr[i].character]);
 
 		printf("압축 결과 : %s\n", encoding); //인코딩 한 이진수 배열 출력
-		printf("압축비는 %f 이다\n", ((num * 8) / num2) );
+		printf("압축비는 %f 이다\n", ((num * 8) / num2));
 		printf("압축 해제 : ");
 		decode(encoding, root);
 	}
 	return 0;
 }
+
 ,
 
 
@@ -209,10 +211,10 @@ int main()
 새로운 노드를 만드는 함수이다. 새로운 노드의 구조체를 반환해준다.
 
 ```
-node* makenode(char alphabet, int freq, struct node* left, struct node* right)
+node* makenode(char character, int freq, struct node* left, struct node* right)
 {
 	node* new_node = (node*)malloc(sizeof(node));
-	new_node->alphabet = alphabet;
+	new_node->character = character;
 	new_node->freq = freq;
 	new_node->left = left;
 	new_node->right = right;
@@ -233,9 +235,9 @@ node* make_Huffman_tree(char arr[])
 	int temp_n = 0;
 	int min = 0;  //제일 빈도수가 작은 index
 	int min2 = 0; //두 번째로 빈도수가 작은 index
-	int fre[alph_num] = { 0 };  //알파벳(A~Z) 빈도 수
-	int check[alph_num] = { 0 };  //합쳐졌는지 확인(합쳐져서 살펴 볼 필요가 없으면 -1)
-	node* tree[alph_num] = { NULL };  //비교할 노드 배열
+	int fre[askii] = { 0 };  //문자(space~z) 빈도 수
+	int check[askii] = { 0 };  //합쳐졌는지 확인(합쳐져서 살펴 볼 필요가 없으면 -1)
+	node* tree[askii] = { NULL };  //비교할 노드 배열
 	node* new_node; //새 노드
 
 
@@ -246,11 +248,11 @@ node* make_Huffman_tree(char arr[])
 	while (arr[i] != NULL)
 	{
 		//빈도수 구하기
-		fre[arr[i] - 'A']++;
+		fre[arr[i]]++;
 		i++;
 	}
 ```	
-예를 들어 A가 들어간다면 fre[0]의 값이 증가하고 arr[i] Z라면 fre[25]의 값이 증가한다. 들어온 값이 AAZAZ라면 fre[0]의 값은 3고 fre[25]의 값은 2이다.
+예를 들어 공백(space)이 들어간다면 fre[31]의 값이 증가하고 arr[i] z라면 fre[121]의 값이 증가한다. 들어온 값이 AAZAZ라면 fre[64]의 값은 3고 fre[121]의 값은 2이다.
 
 
 
@@ -260,18 +262,18 @@ node* make_Huffman_tree(char arr[])
 
 
 ```	
-	for (int i = 0; i < alph_num; i++)
+	for (int i = 0; i < askii; i++)
 	{
-		//알파벳이 존재하면
+		//문자가 존재하면
 		if (fre[i] != 0)
 		{
-			node_arr[ind] = *makenode(i + 'A', fre[i], NULL, NULL);
-			tree[ind++] = makenode(i + 'A', fre[i], NULL, NULL); //노드 생성
+			node_arr[ind] = *makenode(i, fre[i], NULL, NULL);//space부터 z까지
+			tree[ind++] = makenode(i, fre[i], NULL, NULL); //노드 생성
 		}
 	}
 ```
 
-A~Z중에서 빈도수가 0이 아니라면 알파벳이 존재한다. 알파벳이 존재한다면 알파벳과 알파벳의 빈도수가 있는 노드를 생성한다.
+공백(space)~z중에서 빈도수가 0이 아니라면 문자가 존재한다. 문자가 존재한다면 문자와 문자의 빈도수가 있는 노드를 생성한다.
 
 
 
@@ -334,11 +336,11 @@ void make_table(node* n, char str[], int len, char* table[])
 	if (n->left == NULL && n->right == NULL) //n이 단노드인 경우
 	{
 		str[len] = '\0'; //문장의 끝을 str끝에 넣어주고
-						 //단 노드의 알파벳을 확인하여 table의 적절한 위치에 str문자열을 넣는다.
-		strcpy(table[(n->alphabet) - 'A'], str);
+						 //단 노드의 문자를 확인하여 table의 적절한 위치에 str문자열을 넣는다.
+		strcpy(table[(n->character)], str);
 	}
 ```	
-노드의 자식이 없다면 노드의 알파벳을 확인하여 table의 적절하 위치에 str을 넣는다.
+노드의 자식이 없다면 노드의 문자를 확인하여 table의 적절하 위치에 str을 넣는다.
 
 ```
 	else //단 노드가 아닌 경우
@@ -371,40 +373,57 @@ void make_table(node* n, char str[], int len, char* table[])
 ```
 int main()
 {
-	
+
 	char arr[MAX]; //압축하고자 하는 문자열
-	char* code[alph_num]; //각 알파벳에 대한 가변길이 코드 배열
+	char* code[askii]; //각 문자에 대한 가변길이 코드 배열
 	char str[MAX]; //문자열 변수
 	char encoding[MAX] = ""; //인코딩해서 나온 이진수 배열
 	int i; //반복문 변수
 	char answer; //디코딩 원하는가에 대한 대답 변수
 	node* root;//트리의 루트
-	
-	for (i = 0; i < alph_num; i++)
+	float num = 1.0;
+	for (i = 32; i < askii; i++)
 		code[i] = (char*)malloc(sizeof(char));
 
-	printf("압축하고자 하는 문자열(대문자) : ");
-	scanf("%s", arr); //압축하고자 하는 문자열 입력
+	printf("압축파일: ");
+	scanf("%[^\n]s", arr); //압축하고자 하는 문자열 입력
+	for (int i = 1; arr[i] != NULL; i++) {
 
+
+		num++;
+	}
+	float num2 = 1.0;
 	root = make_Huffman_tree(arr); //허프만코드를 이용한 트리 생성
-	make_table(root, str, 0, code); //트리를 사용한 알파벳 별 가변길이 코드 생성
+	make_table(root, str, 0, code); //트리를 사용한 문자 별 가변길이 코드 생성
 
 	i = 0;
 	while (arr[i] != NULL) { //입력받은 문자열이 끝날때까지
-		strcat(encoding, code[arr[i] - 'A']); //문자별 코드 인코딩 문자열 뒤에 넣기
-		strcat(encoding, " ");
+		
+		strcat(encoding, code[arr[i]]); //문자별 코드 인코딩 문자열 뒤에 넣기
+
 		i++;
+		
 	}
-if (num == 1) {
+	for (int o = 1; encoding[o] != NULL; o++) {
+
+		num2++;
+
+	}
+	if (num == 1) {
 		printf("압축결과 :   1 \n  ");
-		printf("압축률 :   8");
+		printf("압축비 :   8 ");
 	}
 
-else {
-	printf("압축 결과 : %s\n", encoding); //인코딩 한 이진수 배열 출력
-	printf("압축률: %d", (num * 8) / num2);
+
+	else {
+		for (i = 0; i < ind; i++)
+			printf("%c : %s\n", node_arr[i].character, code[node_arr[i].character]);
+
+		printf("압축 결과 : %s\n", encoding); //인코딩 한 이진수 배열 출력
+		printf("압축비는 %f 이다\n", ((num * 8) / num2));
+		printf("압축 해제 : ");
+		decode(encoding, root);
 	}
-	
 
 	return 0;
 }
@@ -506,23 +525,24 @@ ex) 예를들어 문자열  ABBCCDDDEEEEFFFFFF을 압축해보자
 이렇게 커다란 데이터덩어리를 최소한의 데이터 덩어리로 줄일 수 있다.
 
 
+## 추가 예시
+ex) 파일을 입력받는 코드를 추가해 이상한나라의 앨리스의 내용중 한 문장을 간략하게 가져와 허프만 코드화 해보았다.  
+``` 
+Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, "and what is the use of a book," thought Alice, "without pictures or conversations?"  
+```
+컴파일 결과는 아래와 같다.
+![image](https://user-images.githubusercontent.com/101345032/162574659-3d6c4ba7-72df-4335-a14d-f831a1e092ec.PNG)
 
+압축비는 1.919240이다.
 
+이처럼 점점 데이터가 커지면 커질수록, 압축비 역시도 효율이 점점 줄어듬을 볼 수 있다.   
+물론 압축을 해서 데이터상으로 이득을 볼 수 있을지 몰라도, 사용자의 번거러움까지 고려했을때 과연 압축하는 것이 이득이 될지 의문이 든다.
 
+## 맡은일과 느낀점
 
+### 202101609/신선호
 
-
-
-
-
-
-
-
-
-
-
-
-
+허프만 코드를 이루는 각 함수에 대한 분석을 하고 데이터파일을 허프만 코드로 압축을 하여 얻는 실용성은 무엇인지에 대해 조사하였습니다. 압축이 어떻게 이뤄지는지에 대해 알고 압축의 실용성을 직접 체감하면서 허프만 개발자의 위용을 몸소 느꼈습니다. 허프만 코드같은 훌륭한 알고리즘을 훌륭한 개발자가 되서 저도 개발하고 싶습니다.
 
 
 
